@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import kade_c.taskforge.InternalFilesManager;
 import kade_c.taskforge.R;
@@ -190,6 +191,7 @@ public class ToDoFragment extends Fragment {
                         dateSelected.setText(day + "/" + (month + 1) + "/" + year);
                     }
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(new Date().getTime());
                 datePickerDialog.show();
             }
         });
