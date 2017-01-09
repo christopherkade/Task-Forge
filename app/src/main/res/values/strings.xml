@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Task Forge</string>
+
+    <!-- Authentication -->
+    <string name="password_reset_toast">Password reset e-mail sent</string>
+    <string name="auth_failed">Authentication failed</string>
+    <string name="name_button_text">Set name</string>
+    <string name="password_reset_email">Enter your email address and we will send you a link to reset your password.</string>
+    <string name="password_reset_button_text">Send email</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="create_account">Create Account</string>
+    <string name="loading">Loading…</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="forgot_password_text">Forgot Password?</string>
+    <string name="name_hint">e.g: Chris</string>
+    <string name="sign_in">Sign In</string>
+
+    <!-- Task Forge -->
+    <string name="action_log_out">Log out</string>
+
+    <!-- Nav. Drawer -->
+    <string name="generalTab">General</string>
+    <string name="dailyTab">Daily</string>
+    <string name="groceriesTab">Groceries</string>
+    <string name="aboutTab">About</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- About -->
+    <string name="developedBy_text">Developed By</string>
+    <string name="developerName_text">Christopher Kadé</string>
+    <string name="email_text">E-mail</string>
+    <string name="email_value">c.kade96@gmail.com</string>
+
+
+</resources>

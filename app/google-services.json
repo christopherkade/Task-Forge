@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "114630768956",
+    "firebase_url": "https://task-forge.firebaseio.com",
+    "project_id": "task-forge",
+    "storage_bucket": "task-forge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114630768956:android:057844490e61bbbc",
+        "android_client_info": {
+          "package_name": "kade_c.taskforge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "114630768956-3qunip76fp5dkutm0m4389rttobj394f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kade_c.taskforge",
+            "certificate_hash": "8A1C65BBE39E0560189EC2DC3E5CD8ECC20D16DD"
+          }
+        },
+        {
+          "client_id": "114630768956-0e71r6jk217v2tfeuqaaoq9ikp16p006.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmQPCky6pSB5ejIdkKYC-bTZQuyJslwnw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "114630768956-0e71r6jk217v2tfeuqaaoq9ikp16p006.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="trakr.kade_c.test.MainActivity">
+
+    <item
+        android:id="@+id/action_log_out"
+        android:icon="@mipmap/log_off_icon"
+        android:title="@string/action_log_out"
+        app:showAsAction="ifRoom" />
+</menu>
