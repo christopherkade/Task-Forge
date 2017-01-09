@@ -14,11 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,14 +26,16 @@ import java.util.Date;
 
 import kade_c.taskforge.InternalFilesManager;
 import kade_c.taskforge.R;
+import kade_c.taskforge.TaskForgeActivity;
 import kade_c.taskforge.ToDoArrayAdapter;
 
 
 /**
  * Fragment that handles the display of the To Do list for the selected tab
  */
-// TODO: Add edition + consultation
+// TODO: Add edition
 public class ToDoFragment extends Fragment {
+
     private View view;
 
     private String tabSelected;
@@ -52,8 +54,10 @@ public class ToDoFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_todo, container, false);
 
         // Save name of the tab selected.
-        tabSelected = getArguments().getString("name");
-        email = getArguments().getString("email");
+        if (!getArguments().isEmpty()) {
+            tabSelected = getArguments().getString("name");
+            email = getArguments().getString("email");
+        }
 
         refreshList();
 
@@ -103,6 +107,7 @@ public class ToDoFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.edit:
+                editTODO(index);
                 // your first action code
                 return true;
             case R.id.delete:
@@ -118,15 +123,30 @@ public class ToDoFragment extends Fragment {
      * Handles the listeners for our ListView (long click and click)
      */
     private void handleListViewActions() {
-        ListView list = (ListView) view.findViewById(R.id.list);
+        final ListView list = (ListView) view.findViewById(R.id.list);
 
         registerForContextMenu(list);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "Item click",
-                        Toast.LENGTH_LONG).show();
+                View clickedItemView = getViewByPosition(i, list);
+
+                Fragment fragment = new ToDoConsultFragment();
+
+                TextView clickedTitle = (TextView) clickedItemView.findViewById(R.id.title);
+                TextView clickedContent = (TextView) clickedItemView.findViewById(R.id.content);
+                TextView clickedDate = (TextView) clickedItemView.findViewById(R.id.date);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("title", clickedTitle.getText().toString());
+                bundle.putString("content", clickedContent.getText().toString());
+                bundle.putString("date", clickedDate.getText().toString());
+                bundle.putString("tab", tabSelected);
+
+                fragment.setArguments(bundle);
+
+                ((TaskForgeActivity)getActivity()).replaceFragment(fragment);
             }
         });
     }
@@ -136,24 +156,119 @@ public class ToDoFragment extends Fragment {
         refreshList();
     }
 
-//    public View getViewByPosition(int pos, ListView listView) {
-//        final int firstListItemPosition = listView.getFirstVisiblePosition();
-//        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-//
-//        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
-//            return listView.getAdapter().getView(pos, null, listView);
-//        } else {
-//            final int childIndex = pos - firstListItemPosition;
-//            return listView.getChildAt(childIndex);
-//        }
-//    }
-//
-//    private void editTODO(int position) {
-//        ListView mListView = (ListView) view.findViewById(R.id.list);
-//
-//        View editedView = getViewByPosition(position, mListView);
-//
-//    }
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
+
+    private void editTODO(final int position) {
+        input = new ArrayList<>();
+        ListView mListView = (ListView) view.findViewById(R.id.list);
+
+        View editedView = getViewByPosition(position, mListView);
+
+        TextView titleTv = (TextView) editedView.findViewById(R.id.title);
+        TextView dateTv = (TextView) editedView.findViewById(R.id.date);
+        TextView contentTv = (TextView) editedView.findViewById(R.id.content);
+        //CheckBox checkBox = (CheckBox) editedView.findViewById(R.id.check)
+
+        // Get the selected item's info
+        String title = titleTv.getText().toString();
+        String date = dateTv.getText().toString();
+        String content = contentTv.getText().toString();
+
+        LayoutInflater li = LayoutInflater.from(getContext());
+        final View promptsView = li.inflate(R.layout.dialog_todo_layout, null);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getContext());
+
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText titleInput = (EditText) promptsView
+                .findViewById(R.id.title_input);
+        final EditText contentInput = (EditText) promptsView
+                .findViewById(R.id.content_input);
+
+        titleInput.setText(title);
+        contentInput.setText(content);
+
+        final ImageView calendar = (ImageView) promptsView.findViewById(R.id.calendar_image);
+        final TextView dateSelected = (TextView) promptsView.findViewById(R.id.date_text);
+        final Calendar c = Calendar.getInstance();
+
+        // Set current date by default
+        dateSelected.setText(date);
+
+        // Set Date chooser listener
+        calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
+                        dateSelected.setText(day + "/" + (month + 1) + "/" + year);
+                    }
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(new Date().getTime());
+                datePickerDialog.show();
+            }
+        });
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Add",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                inputError = checkInput(titleInput, dateSelected);
+                                if (!inputError) {
+                                    input.add(titleInput.getText().toString());
+                                    input.add(contentInput.getText().toString());
+                                    input.add(dateSelected.getText().toString());
+
+                                    // write input in file
+                                    IFM.replaceItem(position, input.get(0), input.get(1), input.get(2));
+                                    // replace at line
+
+                                    // refresh to do list
+                                    refreshList();
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                inputError = false;
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                //If the error flag was set to true then show the dialog again
+                if (inputError) {
+                    alertDialog.show();
+                }
+            }
+        });
+    }
 
     /**
      * Handles the TO DO Dialog
@@ -286,7 +401,7 @@ public class ToDoFragment extends Fragment {
                 lines.remove(0);
         }
 
-        final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines);
+        final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines, IFM);
         mListView.setAdapter(adapter);
     }
 }

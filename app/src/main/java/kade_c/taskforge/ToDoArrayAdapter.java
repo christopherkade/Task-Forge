@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-
 
 /**
  * Adapter for our To Do ListView
@@ -19,11 +17,13 @@ import java.util.ArrayList;
 public class ToDoArrayAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final ArrayList<String> values;
+    private InternalFilesManager IFM;
 
-    public ToDoArrayAdapter(Context context, ArrayList<String> values) {
+    public ToDoArrayAdapter(Context context, ArrayList<String> values, InternalFilesManager IFM) {
         super(context, -1, values);
         this.context = context;
         this.values = values;
+        this.IFM = IFM;
     }
 
     @NonNull
@@ -52,7 +52,9 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
 
         final CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
 
-        // Catches the click of a checkbox
+        /**
+         * When user clicks on CheckBox, change state in file
+         */
         checkBox.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -62,14 +64,11 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View arg0) {
                 final boolean isChecked = checkBox.isChecked();
-                // TODO: Change state in file when box clicked (to conserve state between fragments)
-//                InternalFilesManager IFM = new InternalFilesManager(getContext(), new TaskForgeActivity());
-//
-//                IFM.changeCheckBoxState(position, isChecked);
+                IFM.changeCheckBoxState(position, isChecked);
             }
         });
 
-        if (checked.equals("true")) {
+        if (checked.equals("true\n")) {
             checkBox.setChecked(true);
         } else {
             checkBox.setChecked(false);

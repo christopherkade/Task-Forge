@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +19,9 @@ import android.view.View;
 import kade_c.taskforge.fragments.AboutFragment;
 import kade_c.taskforge.fragments.ToDoFragment;
 
+/**
+ * Activity that handles the display of List Fragments
+ */
 public class TaskForgeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     // Our Navigation Drawer.
@@ -62,7 +64,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     /**
      * Sets up our Navigation Drawer
      */
-    private void setUpNavDrawer() {
+    public void setUpNavDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -100,12 +102,11 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         if (id == R.id.action_log_out) {
             promptSignOut();
             return true;
+        } else if (id == android.R.id.home) {
+            finish();
+            TaskForgeActivity.this.overridePendingTransition(0, 0);
+            return true;
         }
-//        else if (id == android.R.id.home) { // Find actual id (cleaner) 16908332
-//            finish();
-//            TaskForgeActivity.this.overridePendingTransition(0, 0);
-//            return true;
-//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -229,4 +230,25 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         drawer.closeDrawer(GravityCompat.START);
     }
 
+    /**
+     * Is called in Fragments that should hide the button to access the Nav. Drawer.
+     */
+    public void setDrawerState(boolean isEnabled) {
+        if (isEnabled) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            toggle.setDrawerIndicatorEnabled(true);
+            toggle.syncState();
+
+        } else {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            toggle.setDrawerIndicatorEnabled(false);
+            toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSupportNavigateUp();
+                }
+            });
+            toggle.syncState();
+        }
+    }
 }

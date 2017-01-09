@@ -18,14 +18,14 @@ import java.util.ArrayList;
 public class InternalFilesManager {
 
     private Context context;
-//    private FragmentActivity fActivity;
-    private Activity fActivity;
+    private Activity activity;
 
+    // Name of the current file we must open
     private String fileToOpen;
 
     public InternalFilesManager(Context ctx, Activity activity) {
         context = ctx;
-        fActivity = activity;
+        this.activity = activity;
     }
 
     /**
@@ -33,7 +33,7 @@ public class InternalFilesManager {
      */
     public InternalFilesManager(Context ctx, Activity activity, String[] listNames, String useremail) {
         context = ctx;
-        fActivity = activity;
+        this.activity = activity;
 
         createListFiles(listNames, useremail);
     }
@@ -43,12 +43,13 @@ public class InternalFilesManager {
      */
     public InternalFilesManager(Context ctx, Activity activity, String filename, String useremail) {
         context = ctx;
-        fActivity = activity;
+        this.activity = activity;
         fileToOpen = filename;
     }
 
     /**
      * Creates each list file
+     * General, Daily, Groceries etc.
      */
     private void createListFiles(String[] listNames, String email) {
         try {
@@ -59,7 +60,7 @@ public class InternalFilesManager {
                 // If file has already been created, skip
                 if (fileCheck.exists()) continue;
 
-                FileOutputStream fos = fActivity.openFileOutput(file, Context.MODE_APPEND);
+                FileOutputStream fos = activity.openFileOutput(file, Context.MODE_APPEND);
                 fos.write(email.getBytes());
                 fos.write('\n');
                 fos.write(file.getBytes());
@@ -85,7 +86,7 @@ public class InternalFilesManager {
         try {
             // Checks if file exists
             if (file != null && file.exists()) {
-                FileInputStream fos = fActivity.openFileInput(fileToOpen);
+                FileInputStream fos = activity.openFileInput(fileToOpen);
 
                 int i = 0;
                 for (ret = fos.read(buffer); ret > 0; ret--) {
@@ -109,11 +110,11 @@ public class InternalFilesManager {
     }
 
     /**
-     * Writes the given to do in the appropriate file
+     * Writes the TO DO in our file
      */
     public void writeListFile(String title, String content, String date) {
         try {
-            FileOutputStream fos = fActivity.openFileOutput(fileToOpen, Context.MODE_APPEND);
+            FileOutputStream fos = activity.openFileOutput(fileToOpen, Context.MODE_APPEND);
 
             // Sets title, content, date and if checked
             fos.write(title.getBytes());
@@ -130,11 +131,15 @@ public class InternalFilesManager {
         }
     }
 
+    /**
+     * Deletes a line in our list
+     * @param lineToDelete line to be deleted
+     */
     public void deleteItem(int lineToDelete) {
         try {
             // Reads file and saves file without deck to be deleted in temporary file.
             File file = context.getFileStreamPath(fileToOpen);
-            FileOutputStream tempFile = fActivity.openFileOutput("temp_file", Context.MODE_PRIVATE);
+            FileOutputStream tempFile = activity.openFileOutput("temp_file", Context.MODE_PRIVATE);
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String currentLine;
             int i = -1;
@@ -149,7 +154,7 @@ public class InternalFilesManager {
 
             // Then rewrites the temp file in our deck file.
             File tempFile2 = context.getFileStreamPath("temp_file");
-            FileOutputStream fileToUpdate = fActivity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
+            FileOutputStream fileToUpdate = activity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
             BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
 
             while ((currentLine = tempFileReader.readLine()) != null) {
@@ -164,13 +169,13 @@ public class InternalFilesManager {
     }
 
     /**
-     * Should change the box state at 'lineToChange' to state in fileToOpen
+     * Changes the value of the checkbox for the right line
      */
     public void changeCheckBoxState(int lineToChange, boolean state) {
         try {
             // Reads file and saves file without deck to be deleted in temporary file.
             File file = context.getFileStreamPath(fileToOpen);
-            FileOutputStream tempFile = fActivity.openFileOutput("temp_file", Context.MODE_PRIVATE);
+            FileOutputStream tempFile = activity.openFileOutput("temp_file", Context.MODE_PRIVATE);
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String currentLine;
             int i = -1;
@@ -179,9 +184,9 @@ public class InternalFilesManager {
                 i++;
                 if (i == lineToChange) {
                     if (state)
-                        currentLine = currentLine.replace("true", "false");
-                    else
                         currentLine = currentLine.replace("false", "true");
+                    else
+                        currentLine = currentLine.replace("true", "false");
                 }
                 tempFile.write(currentLine.getBytes());
                 tempFile.write('\n');
@@ -190,7 +195,59 @@ public class InternalFilesManager {
 
             // Then rewrites the temp file in our deck file.
             File tempFile2 = context.getFileStreamPath("temp_file");
-            FileOutputStream fileToUpdate = fActivity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
+            FileOutputStream fileToUpdate = activity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
+            BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
+
+            while ((currentLine = tempFileReader.readLine()) != null) {
+                fileToUpdate.write(currentLine.getBytes());
+                fileToUpdate.write('\n');
+            }
+            tempFileReader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Replaces a line in our list
+     * @param lineToReplace line to be replaced
+     * @param title title to be used
+     * @param content content to be used
+     * @param date date to be used
+     */
+    public void replaceItem(int lineToReplace, String title, String content, String date) {
+        try {
+            // Reads file and saves file without deck to be deleted in temporary file.
+            File file = context.getFileStreamPath(fileToOpen);
+            FileOutputStream tempFile = activity.openFileOutput("temp_file", Context.MODE_PRIVATE);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String currentLine;
+            int i = -1;
+
+            while ((currentLine = reader.readLine()) != null) {
+                i++;
+                if (i == lineToReplace) {
+                    String[] splitted = currentLine.split(" \\| ");
+                    splitted[0] = title;
+                    splitted[1] = content;
+                    splitted[2] = date;
+
+                    // TODO: find cleaner way to do it
+                    String updatedLine = splitted[0] + " | " + splitted[1] + " | " +
+                            splitted[2] + " | " + splitted[3];
+                    currentLine = updatedLine;
+                    // Replace here
+
+                }
+                tempFile.write(currentLine.getBytes());
+                tempFile.write('\n');
+            }
+            reader.close();
+
+            // Then rewrites the temp file in our deck file.
+            File tempFile2 = context.getFileStreamPath("temp_file");
+            FileOutputStream fileToUpdate = activity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
             BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
 
             while ((currentLine = tempFileReader.readLine()) != null) {
