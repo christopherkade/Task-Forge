@@ -3,6 +3,7 @@ package kade_c.taskforge;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -75,7 +76,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Sets the 'Home' tab as selected by default.
+        // Sets the 'General' tab as selected by default.
         navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
         displaySelectedScreen(R.id.nav_general);
     }
@@ -99,11 +100,12 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         if (id == R.id.action_log_out) {
             promptSignOut();
             return true;
-        } else if (id == android.R.id.home) { // Find actual id (cleaner) 16908332
-            finish();
-            TaskForgeActivity.this.overridePendingTransition(0, 0);
-            return true;
         }
+//        else if (id == android.R.id.home) { // Find actual id (cleaner) 16908332
+//            finish();
+//            TaskForgeActivity.this.overridePendingTransition(0, 0);
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -118,27 +120,21 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         Fragment fragment = null;
         Bundle bundle = new Bundle();
 
-        // Display the FAB
-//        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
-//        fab.setVisibility(View.VISIBLE);
-
         switch (itemId) {
-            // HOME
+            // GENERAL
             case R.id.nav_general:
                 bundle.putString("name", listNames[0]);
                 break;
-            // SEARCH CARD
+            // DAILY
             case R.id.nav_daily:
                 bundle.putString("name", listNames[1]);
                 break;
-            // CARD DISPLAYER
+            // GROCERIES
             case R.id.nav_groceries:
                 bundle.putString("name", listNames[2]);
                 break;
+            // ABOUT
             case R.id.nav_about:
-                // Hides the FAB before displaying the about fragment
-//                fab.setVisibility(View.GONE);
-
                 fragment = new AboutFragment();
                 bundle.putString("name", "About");
                 break;
@@ -157,7 +153,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(final MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         displaySelectedScreen(item.getItemId());
         drawer.closeDrawer(GravityCompat.START);
 
@@ -219,7 +215,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
     /**
      * Replaces the current fragment and closes the Drawer.
-     * @param fragment
+     * @param fragment fragment used for replacement
      */
     public void replaceFragment(final Fragment fragment) {
         getSupportFragmentManager()

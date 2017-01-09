@@ -29,9 +29,6 @@ import com.google.firebase.auth.UserProfileChangeRequest;
  */
 public class AuthenticationActivity extends AppCompatActivity implements
         View.OnClickListener {
-
-    private static final String TAG = "AuthenticationActivity";
-
     private TextView mStatusTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
@@ -109,20 +106,14 @@ public class AuthenticationActivity extends AppCompatActivity implements
     }
 
     private void createAccount(String email, String password) {
-        Log.d(TAG, "createAccount:" + email);
-
         showProgressDialog();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
                         // If account creation fails warn, otherwise proceed.
                         if (!task.isSuccessful()) {
-                            Log.d(TAG, "onComplete: Failed=" + task.getException().getMessage());
-
                             Toast.makeText(AuthenticationActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -139,20 +130,15 @@ public class AuthenticationActivity extends AppCompatActivity implements
     }
 
     private void signIn(final String email, String password) {
-        Log.d(TAG, "signIn:" + email);
-
         showProgressDialog();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
                         // If sign-in fails warn, otherwise start app
                         if (!task.isSuccessful()) {
                             mStatusTextView.setText(R.string.auth_failed);
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(AuthenticationActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
                         } else {
@@ -197,12 +183,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
                                     Toast.LENGTH_LONG).show();
                         }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, e.getMessage());
-                    }
                 });
         updateUI(null, true);
     }
@@ -235,8 +215,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
      * Displays elements necessary for user name input
      */
     private void setUserNameUI() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         hideProgressDialog();
 
         EditText nameInput = (EditText) findViewById(R.id.field_email);
@@ -252,7 +230,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
         fieldPassword.setVisibility(View.GONE);
 
         findViewById(R.id.email_sign_in_button).setVisibility(View.GONE);
-//        findViewById(R.id.forgot_password_text).setVisibility(View.GONE);
     }
 
     /**

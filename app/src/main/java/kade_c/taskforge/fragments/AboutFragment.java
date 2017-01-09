@@ -14,7 +14,7 @@ import kade_c.taskforge.R;
 
 public class AboutFragment extends Fragment {
 
-    View view;
+    private View view;
 
     final private String linkedinURL = "https://www.linkedin.com/in/christopher-kade-696501a8";
     final private String githubURL = "https://github.com/christopherkade";

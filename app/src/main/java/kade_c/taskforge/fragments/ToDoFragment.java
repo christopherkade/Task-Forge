@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,9 +31,9 @@ import kade_c.taskforge.ToDoArrayAdapter;
 /**
  * Fragment that handles the display of the To Do list for the selected tab
  */
-// TODO: Add edition + consultation + deletion
+// TODO: Add edition + consultation
 public class ToDoFragment extends Fragment {
-    View view;
+    private View view;
 
     private String tabSelected;
 
@@ -45,7 +43,7 @@ public class ToDoFragment extends Fragment {
 
     private ArrayList<String> input;
 
-    boolean inputError;
+    private boolean inputError;
 
     @Nullable
     @Override
@@ -69,11 +67,7 @@ public class ToDoFragment extends Fragment {
             }
         });
 
-        // Listener for list items
-        ListView list = (ListView) view.findViewById(R.id.list);
-
-        // Prepare long click context menu
-        registerForContextMenu(list);
+        handleListViewActions();
 
         return view;
     }
@@ -84,27 +78,61 @@ public class ToDoFragment extends Fragment {
         getActivity().setTitle(tabSelected);
     }
 
+
+    /**
+     * Inflates the context menu
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+
         if (v.getId() == R.id.list) {
             MenuInflater inflater = getActivity().getMenuInflater();
             inflater.inflate(R.menu.todo_context_menu, menu);
         }
     }
 
+    /**
+     * Called when context menu item is clicked
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index = info.position;
+
         switch (item.getItemId()) {
             case R.id.edit:
                 // your first action code
                 return true;
             case R.id.delete:
+                deleteTODO(index);
                 // your second action code
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    /**
+     * Handles the listeners for our ListView (long click and click)
+     */
+    private void handleListViewActions() {
+        ListView list = (ListView) view.findViewById(R.id.list);
+
+        registerForContextMenu(list);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getActivity(), "Item click",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void deleteTODO(int position) {
+        IFM.deleteItem(position);
+        refreshList();
     }
 
 //    public View getViewByPosition(int pos, ListView listView) {
@@ -172,7 +200,7 @@ public class ToDoFragment extends Fragment {
                 .setPositiveButton("Add",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                inputError = checkInput(titleInput, contentInput,dateSelected);
+                                inputError = checkInput(titleInput, dateSelected);
                                 if (!inputError) {
                                     input.add(titleInput.getText().toString());
                                     input.add(contentInput.getText().toString());
@@ -213,7 +241,10 @@ public class ToDoFragment extends Fragment {
         });
     }
 
-    private boolean checkInput(EditText titleInput, EditText contentInput, TextView dateSelected) {
+    /**
+     * Checks input validity
+     */
+    private boolean checkInput(EditText titleInput, TextView dateSelected) {
         boolean wrong = false;
 
         if (titleInput.getText().toString().trim().equals("")) {
@@ -237,11 +268,15 @@ public class ToDoFragment extends Fragment {
      */
     private void refreshList() {
         ListView mListView = (ListView) view.findViewById(R.id.list);
-        ArrayList<String> lines = new ArrayList<>();
+        ArrayList<String> lines;
         IFM = new InternalFilesManager(getContext(), getActivity(), tabSelected, email);
 
+        // Get lines to display in current tab
         lines = IFM.readListFile();
 
+        // TODO: Only display files for good e-mail
+
+        // Remove two first lines
         if (lines.size() > 0) {
             if (lines.get(0).equals(email + "\n"))
                 lines.remove(0);

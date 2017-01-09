@@ -4,9 +4,11 @@ package kade_c.taskforge;
 import android.app.Activity;
 import android.content.Context;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -128,5 +130,36 @@ public class InternalFilesManager {
         }
     }
 
+    public void deleteItem(int lineToDelete) {
+        try {
+            // Reads file and saves file without deck to be deleted in temporary file.
+            File file = context.getFileStreamPath(fileToOpen);
+            FileOutputStream tempFile = fActivity.openFileOutput("temp_file", Context.MODE_PRIVATE);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String currentLine;
+            int i = -1;
 
+            while ((currentLine = reader.readLine()) != null) {
+                i++;
+                if (i == lineToDelete) continue;
+                tempFile.write(currentLine.getBytes());
+                tempFile.write('\n');
+            }
+            reader.close();
+
+            // Then rewrites the temp file in our deck file.
+            File tempFile2 = context.getFileStreamPath("temp_file");
+            FileOutputStream fileToUpdate = fActivity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
+            BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
+
+            while ((currentLine = tempFileReader.readLine()) != null) {
+                fileToUpdate.write(currentLine.getBytes());
+                fileToUpdate.write('\n');
+            }
+            tempFileReader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
