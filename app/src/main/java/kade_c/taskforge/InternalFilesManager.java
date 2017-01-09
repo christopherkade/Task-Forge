@@ -23,13 +23,10 @@ public class InternalFilesManager {
 
     private String fileToOpen;
 
-//    public InternalFilesManager(Context ctx, FragmentActivity activity, String[] listNames) {
-//        context = ctx;
-//        fActivity = activity;
-//
-//        setUpFilesList(listNames);
-//        createListFiles();
-//    }
+    public InternalFilesManager(Context ctx, Activity activity) {
+        context = ctx;
+        fActivity = activity;
+    }
 
     /**
      * Constructor to create our initial list files
@@ -118,11 +115,14 @@ public class InternalFilesManager {
         try {
             FileOutputStream fos = fActivity.openFileOutput(fileToOpen, Context.MODE_APPEND);
 
+            // Sets title, content, date and if checked
             fos.write(title.getBytes());
             fos.write(" | ".getBytes());
             fos.write(content.getBytes());
             fos.write(" | ".getBytes());
             fos.write(date.getBytes());
+            fos.write(" | ".getBytes());
+            fos.write("false".getBytes());
             fos.write('\n');
             fos.close();
         } catch (IOException e) {
@@ -142,6 +142,47 @@ public class InternalFilesManager {
             while ((currentLine = reader.readLine()) != null) {
                 i++;
                 if (i == lineToDelete) continue;
+                tempFile.write(currentLine.getBytes());
+                tempFile.write('\n');
+            }
+            reader.close();
+
+            // Then rewrites the temp file in our deck file.
+            File tempFile2 = context.getFileStreamPath("temp_file");
+            FileOutputStream fileToUpdate = fActivity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
+            BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
+
+            while ((currentLine = tempFileReader.readLine()) != null) {
+                fileToUpdate.write(currentLine.getBytes());
+                fileToUpdate.write('\n');
+            }
+            tempFileReader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Should change the box state at 'lineToChange' to state in fileToOpen
+     */
+    public void changeCheckBoxState(int lineToChange, boolean state) {
+        try {
+            // Reads file and saves file without deck to be deleted in temporary file.
+            File file = context.getFileStreamPath(fileToOpen);
+            FileOutputStream tempFile = fActivity.openFileOutput("temp_file", Context.MODE_PRIVATE);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String currentLine;
+            int i = -1;
+
+            while ((currentLine = reader.readLine()) != null) {
+                i++;
+                if (i == lineToChange) {
+                    if (state)
+                        currentLine = currentLine.replace("true", "false");
+                    else
+                        currentLine = currentLine.replace("false", "true");
+                }
                 tempFile.write(currentLine.getBytes());
                 tempFile.write('\n');
             }

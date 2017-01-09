@@ -30,7 +30,6 @@
         android:text="@+id/label"
         android:layout_below="@id/date"/>
 
-
     <CheckBox
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
