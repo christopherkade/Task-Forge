@@ -8,4 +8,5 @@
         android:icon="@mipmap/log_off_icon"
         android:title="@string/action_log_out"
         app:showAsAction="ifRoom" />
+
 </menu>

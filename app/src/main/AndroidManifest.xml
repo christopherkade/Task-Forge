@@ -18,6 +18,8 @@
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
+        <activity android:name=".SettingsActivity"/>
+
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
@@ -28,6 +30,12 @@
         </activity>
 
         <activity android:name=".TaskForgeActivity" />
+
+        <uses-permission android:name="android.permission.VIBRATE" />
+        <uses-permission android:name="android.permission.WAKE_LOCK" />
+        <service android:name=".Receiver" android:enabled="true">
+            <intent-filter> <action android:name="NOTIFICATION_SERVICE" /></intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -18,10 +18,20 @@
 
     <TextView
         android:id="@+id/date"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:text="@+id/label" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        android:layout_toEndOf="@id/date"
+        android:layout_toRightOf="@id/date"
+        android:layout_below="@id/title"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:text="@+id/label"/>
 
     <TextView
         android:id="@+id/content"

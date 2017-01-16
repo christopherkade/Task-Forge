@@ -39,13 +39,17 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
         String title = todoArray[0];
         String content = todoArray[1];
         String date = todoArray[2];
-        String checked = todoArray[3];
+        String time = todoArray[3];
+        String checked = todoArray[4];
 
         TextView titleTextView = (TextView) rowView.findViewById(R.id.title);
         titleTextView.setText(title);
 
         TextView dateTextView = (TextView) rowView.findViewById(R.id.date);
         dateTextView.setText(date);
+
+        TextView timeTextView = (TextView) rowView.findViewById(R.id.time);
+        timeTextView.setText(time);
 
         TextView contentTextView = (TextView) rowView.findViewById(R.id.content);
         contentTextView.setText(content);

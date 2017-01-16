@@ -15,11 +15,21 @@
 
     <TextView
         android:text=""
+        android:textSize="@dimen/consult_text_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/consult_date"
+        android:id="@+id/consult_time"
+        android:layout_alignStart="@id/consult_date"
+        android:layout_alignLeft="@id/consult_date" />
+
+    <TextView
+        android:text=""
         android:textSize="@dimen/consult_content_text_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/consult_content"
-        android:layout_below="@id/consult_date"
+        android:layout_below="@id/consult_time"
         android:layout_alignStart="@id/consult_date"
         android:layout_alignLeft="@id/consult_date" />
 </RelativeLayout>

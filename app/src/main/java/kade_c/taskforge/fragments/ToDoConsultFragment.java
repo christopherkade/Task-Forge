@@ -23,6 +23,7 @@ public class ToDoConsultFragment extends Fragment {
     private String title;
     private String content;
     private String date;
+    private String time;
     private String tab;
 
     @Nullable
@@ -35,6 +36,7 @@ public class ToDoConsultFragment extends Fragment {
         title = getArguments().getString("title");
         content = getArguments().getString("content");
         date = getArguments().getString("date");
+        time = getArguments().getString("time");
         tab = getArguments().getString("tab");
 
         setConsultDetails();
@@ -50,9 +52,11 @@ public class ToDoConsultFragment extends Fragment {
 
     private void setConsultDetails() {
         TextView dateTv = (TextView) view.findViewById(R.id.consult_date);
+        TextView timeTv = (TextView) view.findViewById(R.id.consult_time);
         TextView contentTv = (TextView) view.findViewById(R.id.consult_content);
 
         dateTv.setText(date);
+        timeTv.setText(time);
         contentTv.setText(content);
     }
 

@@ -32,6 +32,10 @@
     <string name="developerName_text">Christopher Kadé</string>
     <string name="email_text">E-mail</string>
     <string name="email_value">c.kade96@gmail.com</string>
+    <string name="action_settings">Settings</string>
+    <string name="settings_theme">Theme:</string>
+    <string name="settings_theme_type_light">Light</string>
+    <string name="settings_theme_type_dark">Dark</string>
 
 
 </resources>

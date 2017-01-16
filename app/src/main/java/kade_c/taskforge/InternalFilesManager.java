@@ -45,6 +45,8 @@ public class InternalFilesManager {
         context = ctx;
         this.activity = activity;
         fileToOpen = filename;
+
+        //createListFiles();
     }
 
     /**
@@ -112,7 +114,7 @@ public class InternalFilesManager {
     /**
      * Writes the TO DO in our file
      */
-    public void writeListFile(String title, String content, String date) {
+    public void writeListFile(String title, String content, String date, String time) {
         try {
             FileOutputStream fos = activity.openFileOutput(fileToOpen, Context.MODE_APPEND);
 
@@ -122,6 +124,8 @@ public class InternalFilesManager {
             fos.write(content.getBytes());
             fos.write(" | ".getBytes());
             fos.write(date.getBytes());
+            fos.write(" | ".getBytes());
+            fos.write(time.getBytes());
             fos.write(" | ".getBytes());
             fos.write("false".getBytes());
             fos.write('\n');
@@ -216,7 +220,7 @@ public class InternalFilesManager {
      * @param content content to be used
      * @param date date to be used
      */
-    public void replaceItem(int lineToReplace, String title, String content, String date) {
+    public void replaceItem(int lineToReplace, String title, String content, String date, String time) {
         try {
             // Reads file and saves file without deck to be deleted in temporary file.
             File file = context.getFileStreamPath(fileToOpen);
@@ -232,10 +236,11 @@ public class InternalFilesManager {
                     splitted[0] = title;
                     splitted[1] = content;
                     splitted[2] = date;
+                    splitted[3] = time;
 
                     // TODO: find cleaner way to do it
                     String updatedLine = splitted[0] + " | " + splitted[1] + " | " +
-                            splitted[2] + " | " + splitted[3];
+                            splitted[2] + " | " + splitted[3] + " | " + splitted[4];
                     currentLine = updatedLine;
                     // Replace here
 

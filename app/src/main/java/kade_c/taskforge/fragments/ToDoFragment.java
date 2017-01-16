@@ -1,9 +1,15 @@
 package kade_c.taskforge.fragments;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -14,11 +20,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +33,7 @@ import java.util.Date;
 
 import kade_c.taskforge.InternalFilesManager;
 import kade_c.taskforge.R;
+import kade_c.taskforge.Receiver;
 import kade_c.taskforge.TaskForgeActivity;
 import kade_c.taskforge.ToDoArrayAdapter;
 
@@ -33,7 +41,6 @@ import kade_c.taskforge.ToDoArrayAdapter;
 /**
  * Fragment that handles the display of the To Do list for the selected tab
  */
-// TODO: Add edition
 public class ToDoFragment extends Fragment {
 
     private View view;
@@ -61,17 +68,7 @@ public class ToDoFragment extends Fragment {
 
         refreshList();
 
-        // Listener for the FAB
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                input = new ArrayList<>();
-                createTODODialog();
-            }
-        });
-
+        handleFAB();
         handleListViewActions();
 
         return view;
@@ -120,6 +117,21 @@ public class ToDoFragment extends Fragment {
     }
 
     /**
+     * Sets Floating Action Button listener
+     */
+    private void handleFAB() {
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                input = new ArrayList<>();
+                createTODODialog();
+            }
+        });
+    }
+
+    /**
      * Handles the listeners for our ListView (long click and click)
      */
     private void handleListViewActions() {
@@ -127,6 +139,7 @@ public class ToDoFragment extends Fragment {
 
         registerForContextMenu(list);
 
+        // Handles click on ListView
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -134,14 +147,18 @@ public class ToDoFragment extends Fragment {
 
                 Fragment fragment = new ToDoConsultFragment();
 
+                // TextViews in the selected row.
                 TextView clickedTitle = (TextView) clickedItemView.findViewById(R.id.title);
                 TextView clickedContent = (TextView) clickedItemView.findViewById(R.id.content);
                 TextView clickedDate = (TextView) clickedItemView.findViewById(R.id.date);
+                TextView clickedTime = (TextView) clickedItemView.findViewById(R.id.time);
 
+                // Bundle containing data in the row selected.
                 Bundle bundle = new Bundle();
                 bundle.putString("title", clickedTitle.getText().toString());
                 bundle.putString("content", clickedContent.getText().toString());
                 bundle.putString("date", clickedDate.getText().toString());
+                bundle.putString("time", clickedTime.getText().toString());
                 bundle.putString("tab", tabSelected);
 
                 fragment.setArguments(bundle);
@@ -151,11 +168,18 @@ public class ToDoFragment extends Fragment {
         });
     }
 
+    /**
+     * Deletes the item at position
+     * @param position
+     */
     private void deleteTODO(int position) {
         IFM.deleteItem(position);
         refreshList();
     }
 
+    /**
+     * Returns the view at the given position on the ListView
+     */
     public View getViewByPosition(int pos, ListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
@@ -168,20 +192,26 @@ public class ToDoFragment extends Fragment {
         }
     }
 
+    /**
+     * Handles edition (Dialog...)
+     */
     private void editTODO(final int position) {
         input = new ArrayList<>();
         ListView mListView = (ListView) view.findViewById(R.id.list);
 
+        // Selected row View.
         View editedView = getViewByPosition(position, mListView);
 
+        // Dialog TextViews
         TextView titleTv = (TextView) editedView.findViewById(R.id.title);
         TextView dateTv = (TextView) editedView.findViewById(R.id.date);
         TextView contentTv = (TextView) editedView.findViewById(R.id.content);
-        //CheckBox checkBox = (CheckBox) editedView.findViewById(R.id.check)
+        TextView timeTv = (TextView) editedView.findViewById(R.id.time);
 
         // Get the selected item's info
         String title = titleTv.getText().toString();
         String date = dateTv.getText().toString();
+        String time = timeTv.getText().toString();
         String content = contentTv.getText().toString();
 
         LayoutInflater li = LayoutInflater.from(getContext());
@@ -196,14 +226,25 @@ public class ToDoFragment extends Fragment {
         final EditText contentInput = (EditText) promptsView
                 .findViewById(R.id.content_input);
 
-        titleInput.setText(title);
-        contentInput.setText(content);
+        // Sets hour
+        final TimePicker timeInput = (TimePicker) promptsView.findViewById(R.id.time);
+        String[] timeArray = time.split(":");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            timeInput.setHour(Integer.parseInt(timeArray[0]));
+            timeInput.setMinute(Integer.parseInt(timeArray[1]));
+        } else {
+            timeInput.setCurrentHour(Integer.parseInt(timeArray[0]));
+            timeInput.setCurrentMinute(Integer.parseInt(timeArray[1]));
+
+        }
 
         final ImageView calendar = (ImageView) promptsView.findViewById(R.id.calendar_image);
         final TextView dateSelected = (TextView) promptsView.findViewById(R.id.date_text);
         final Calendar c = Calendar.getInstance();
 
-        // Set current date by default
+        // Sets existing values
+        titleInput.setText(title);
+        contentInput.setText(content);
         dateSelected.setText(date);
 
         // Set Date chooser listener
@@ -213,7 +254,7 @@ public class ToDoFragment extends Fragment {
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
-                    public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int day) {
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                         dateSelected.setText(day + "/" + (month + 1) + "/" + year);
                     }
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
@@ -222,70 +263,24 @@ public class ToDoFragment extends Fragment {
             }
         });
 
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Add",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                inputError = checkInput(titleInput, dateSelected);
-                                if (!inputError) {
-                                    input.add(titleInput.getText().toString());
-                                    input.add(contentInput.getText().toString());
-                                    input.add(dateSelected.getText().toString());
-
-                                    // write input in file
-                                    IFM.replaceItem(position, input.get(0), input.get(1), input.get(2));
-                                    // replace at line
-
-                                    // refresh to do list
-                                    refreshList();
-                                }
-                                dialog.dismiss();
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                inputError = false;
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-
-        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                //If the error flag was set to true then show the dialog again
-                if (inputError) {
-                    alertDialog.show();
-                }
-            }
-        });
+        // Builds dialog
+        buildDialog(alertDialogBuilder, promptsView, "edit", position);
     }
 
     /**
      * Handles the TO DO Dialog
      */
-    // TODO: Cleanup this method
     private void createTODODialog() {
         LayoutInflater li = LayoutInflater.from(getContext());
+
+        // Inflate dialog view
         final View promptsView = li.inflate(R.layout.dialog_todo_layout, null);
+
+        // Dialog builder
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getContext());
 
         alertDialogBuilder.setView(promptsView);
-
-        final EditText titleInput = (EditText) promptsView
-                .findViewById(R.id.title_input);
-        final EditText contentInput = (EditText) promptsView
-                .findViewById(R.id.content_input);
 
         // Set up the Calendar
         final ImageView calendar = (ImageView) promptsView.findViewById(R.id.calendar_image);
@@ -311,20 +306,50 @@ public class ToDoFragment extends Fragment {
             }
         });
 
-        // set dialog message
+        // Builds dialog
+        buildDialog(alertDialogBuilder, promptsView, "create", 0);
+    }
+
+    /**
+     * Builds and handles the Edition / Creation dialog
+     */
+    private void buildDialog(AlertDialog.Builder alertDialogBuilder, View selectedView,
+                             final String type, final int position) {
+        final EditText titleInput = (EditText) selectedView
+                .findViewById(R.id.title_input);
+        final EditText contentInput = (EditText) selectedView
+                .findViewById(R.id.content_input);
+        final TimePicker timeInput = (TimePicker) selectedView.findViewById(R.id.time);
+        final TextView dateSelected = (TextView) selectedView.findViewById(R.id.date_text);
+
         alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("Add",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
+                            @RequiresApi(api = Build.VERSION_CODES.M)
+                            public void onClick(DialogInterface dialog, int id) {
                                 inputError = checkInput(titleInput, dateSelected);
                                 if (!inputError) {
                                     input.add(titleInput.getText().toString());
                                     input.add(contentInput.getText().toString());
                                     input.add(dateSelected.getText().toString());
 
-                                    // write input in file
-                                    IFM.writeListFile(input.get(0), input.get(1), input.get(2));
+                                    int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+                                    String time;
+                                    if (currentApiVersion > android.os.Build.VERSION_CODES.LOLLIPOP_MR1){
+                                        time = timeInput.getHour() + ":" + timeInput.getMinute();
+                                    } else {
+                                        time = timeInput.getCurrentHour() + ":" + timeInput.getCurrentMinute();
+                                    }
+
+                                    input.add(time);
+
+                                    if (type.equals("create")) {
+                                        // write input in file
+                                        IFM.writeListFile(input.get(0), input.get(1), input.get(2), input.get(3));
+                                    } else if (type.equals("edit")) {
+                                        IFM.replaceItem(position, input.get(0), input.get(1), input.get(2), input.get(3));
+                                    }
 
                                     // refresh to do list
                                     refreshList();
@@ -403,5 +428,26 @@ public class ToDoFragment extends Fragment {
 
         final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines, IFM);
         mListView.setAdapter(adapter);
+
+//        updateNotifications(lines);
+    }
+
+    /**
+     * Updates our notifications to be sent for each event
+     */
+    // Sends a notification after 7 days
+    // TODO: Find a way to set title to notification
+    private void updateNotifications(ArrayList<String> lines) {
+        for (String line : lines) {
+            Calendar sevendayalarm = Calendar.getInstance();
+
+            sevendayalarm.add(Calendar.DATE, 1); // Change days here
+
+            Intent intent = new Intent(getActivity(), Receiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 001, intent, 0);
+
+            AlarmManager am = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            am.set(AlarmManager.RTC_WAKEUP, sevendayalarm.getTimeInMillis(), pendingIntent);
+        }
     }
 }

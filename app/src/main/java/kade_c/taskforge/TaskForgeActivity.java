@@ -22,7 +22,10 @@ import kade_c.taskforge.fragments.ToDoFragment;
 /**
  * Activity that handles the display of List Fragments
  */
+// TODO: let user add tabs
 public class TaskForgeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    int CONTENT_LAYOUT_ID = R.id.content_frame;
 
     // Our Navigation Drawer.
     DrawerLayout drawer;
@@ -30,7 +33,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     // Our toggler for the Navigation Drawer.
     ActionBarDrawerToggle toggle;
 
-    private NavigationView navigationView;
+    protected NavigationView navigationView;
 
     private String email;
 
@@ -44,6 +47,9 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_taskforge);
+
+//        Receiver receiver = new Receiver(this);
+//        receiver.sendNotification("13/01/2017");
 
         email = getIntent().getStringExtra("email");
 
@@ -80,7 +86,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         // Sets the 'General' tab as selected by default.
         navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
-        displaySelectedScreen(R.id.nav_general);
+        displaySelectedScreen(R.id.nav_general, "General");
     }
 
     /**
@@ -105,6 +111,8 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         } else if (id == android.R.id.home) {
             finish();
             TaskForgeActivity.this.overridePendingTransition(0, 0);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            setDrawerState(true);
             return true;
         }
 
@@ -112,38 +120,33 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
+     * Starts the settings Fragment
+     */
+    private void settings() {
+        TaskForgeActivity.this.overridePendingTransition(0, 0);
+        Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+        startActivity(i);
+    }
+
+    /**
      * Checks which item has been selected and instantiates the corresponding Fragment.
-     * Home will not be instantiated twice in order to avoid useless API requests.
      * @param itemId id of the item selected.
      * @return the fragment to be displayed.
      */
-    private Fragment prepareFragment(int itemId) {
-        Fragment fragment = null;
+    private Fragment prepareFragment(int itemId, String title) {
+        Fragment fragment;
         Bundle bundle = new Bundle();
 
+        bundle.putString("name", title);
+
         switch (itemId) {
-            // GENERAL
-            case R.id.nav_general:
-                bundle.putString("name", listNames[0]);
-                break;
-            // DAILY
-            case R.id.nav_daily:
-                bundle.putString("name", listNames[1]);
-                break;
-            // GROCERIES
-            case R.id.nav_groceries:
-                bundle.putString("name", listNames[2]);
-                break;
-            // ABOUT
             case R.id.nav_about:
                 fragment = new AboutFragment();
-                bundle.putString("name", "About");
+                break;
+            default:
+                fragment = new ToDoFragment();
                 break;
         }
-        if (fragment == null) {
-            fragment = new ToDoFragment();
-        }
-
         bundle.putString("email", email);
 
         // Sets fragment argument
@@ -151,27 +154,35 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         return fragment;
     }
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-        displaySelectedScreen(item.getItemId());
-        drawer.closeDrawer(GravityCompat.START);
-
-        if (item.getItemId() != R.id.nav_general)
-            navigationView.getMenu().findItem(R.id.nav_general).setChecked(false);
+        if (displaySelectedScreen(item.getItemId(), item.getTitle().toString())) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            drawer.closeDrawer(GravityCompat.START);
+            if (item.getItemId() != R.id.nav_general)
+                navigationView.getMenu().findItem(R.id.nav_general).setChecked(false);
+        }
         return true;
     }
 
     /**
      * Checks the selected fragments state and launches it.
      */
-    private void displaySelectedScreen(int itemId) {
-        Fragment fragment;
-        fragment = prepareFragment(itemId);
+    private boolean displaySelectedScreen(int itemId, String title) {
+        // Launches Settings if selected
+//        if (itemId == R.id.nav_settings) {
+//            settings();
+//            return true;
+//        }
 
-        if (fragment != null)
-            this.replaceFragment(fragment);
+        Fragment fragment;
+        fragment = prepareFragment(itemId, title);
+
+        this.replaceFragment(fragment);
+
+        return false;
     }
 
 
