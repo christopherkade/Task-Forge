@@ -2,8 +2,10 @@ package kade_c.taskforge;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -12,18 +14,24 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import kade_c.taskforge.fragments.AboutFragment;
+import java.util.ArrayList;
+
 import kade_c.taskforge.fragments.ToDoFragment;
 
 /**
  * Activity that handles the display of List Fragments
  */
-// TODO: let user add tabs
 public class TaskForgeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    InternalFilesManager IFM;
 
     int CONTENT_LAYOUT_ID = R.id.content_frame;
 
@@ -37,21 +45,16 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
     private String email;
 
-    private String[] listNames = new String[] {
-            "General",
-            "Daily",
-            "Groceries"
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_taskforge);
 
-//        Receiver receiver = new Receiver(this);
-//        receiver.sendNotification("13/01/2017");
-
         email = getIntent().getStringExtra("email");
+
+        IFM = new InternalFilesManager(this, this);
+
+        displayTabs();
 
         setUpNavDrawer();
     }
@@ -108,6 +111,9 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         if (id == R.id.action_log_out) {
             promptSignOut();
             return true;
+        } else if (id == R.id.action_add_list) {
+            // TODO: Put add list icon in Nav Drawer
+            promptListName();
         } else if (id == android.R.id.home) {
             finish();
             TaskForgeActivity.this.overridePendingTransition(0, 0);
@@ -139,14 +145,15 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         bundle.putString("name", title);
 
-        switch (itemId) {
-            case R.id.nav_about:
-                fragment = new AboutFragment();
-                break;
-            default:
-                fragment = new ToDoFragment();
-                break;
-        }
+//        switch (itemId) {
+//            case R.id.nav_about:
+//                fragment = new AboutFragment();
+//                break;
+//            default:
+//                break;
+//        }
+
+        fragment = new ToDoFragment();
         bundle.putString("email", email);
 
         // Sets fragment argument
@@ -157,6 +164,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
+        item.setCheckable(true);
         if (displaySelectedScreen(item.getItemId(), item.getTitle().toString())) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -260,6 +268,108 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
                 }
             });
             toggle.syncState();
+        }
+    }
+
+    /**
+     * Displays list name prompt
+     */
+    private void promptListName() {
+        LayoutInflater li = LayoutInflater.from(this);
+
+        // Inflate dialog view
+        final View promptsView = li.inflate(R.layout.dialog_list_name_layout, null);
+
+        // Dialog builder
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText titleInput = (EditText) promptsView
+                .findViewById(R.id.title_input);
+
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Add",
+                        new DialogInterface.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.M)
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                String tab = titleInput.getText().toString();
+
+                                // Add tab to file
+                                addNewTab(tab);
+
+                                // Add tab to menu
+//                                addTab(tab);
+
+                                dialog.dismiss();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    public void onDrawerOpened(View drawerView) {
+        displayTabs();
+        // Stop telling the user, he know how it works
+    }
+
+    /**
+     * Adds tab given as parameter to Navigation Drawer
+     * @param tabName
+     */
+    // Read tab file and display them
+    private void addNewTab(String tabName) {
+        InternalFilesManager IFM = new InternalFilesManager(this, this);
+
+        // Add tab to file, but check for duplicated first
+        if (!IFM.writeTabFile(tabName)) {
+            Toast.makeText(this, "Already exists",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        Menu menu = navView.getMenu();
+
+        MenuItem menuItem = menu.add(tabName);
+        menuItem.setIcon(R.mipmap.ic_launcher);
+    }
+
+    public static boolean hasDuplicates(ArrayList<String> list, String name)
+    {
+        int numCount = 0;
+
+        for (String str : list) {
+            if (str.equals(name)) numCount++;
+        }
+
+        return numCount > 1;
+    }
+
+    // TODO: Make tabs deletable (long click or icon)
+    private void displayTabs() {
+        // Check if already displayed
+        ArrayList<String> tabs = IFM.readTabFile();
+
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        Menu menu = navView.getMenu();
+
+        for (String tab : tabs) {
+            MenuItem menuItem = menu.add(tab);
+            menuItem.setIcon(R.mipmap.ic_launcher);
         }
     }
 }

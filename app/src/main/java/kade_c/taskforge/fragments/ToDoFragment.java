@@ -428,26 +428,5 @@ public class ToDoFragment extends Fragment {
 
         final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines, IFM);
         mListView.setAdapter(adapter);
-
-//        updateNotifications(lines);
-    }
-
-    /**
-     * Updates our notifications to be sent for each event
-     */
-    // Sends a notification after 7 days
-    // TODO: Find a way to set title to notification
-    private void updateNotifications(ArrayList<String> lines) {
-        for (String line : lines) {
-            Calendar sevendayalarm = Calendar.getInstance();
-
-            sevendayalarm.add(Calendar.DATE, 1); // Change days here
-
-            Intent intent = new Intent(getActivity(), Receiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 001, intent, 0);
-
-            AlarmManager am = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-            am.set(AlarmManager.RTC_WAKEUP, sevendayalarm.getTimeInMillis(), pendingIntent);
-        }
     }
 }

@@ -3,6 +3,7 @@ package kade_c.taskforge;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -111,6 +112,41 @@ public class InternalFilesManager {
         return lines;
     }
 
+    public ArrayList<String> readTabFile() {
+        ArrayList<String> lines = new ArrayList<>();
+        File file = context.getFileStreamPath("tabs");
+        String line = "";
+        byte[] buffer = new byte[4096];
+        char c;
+        int ret;
+
+        try {
+            // Checks if file exists
+            if (file != null && file.exists()) {
+                FileInputStream fos = activity.openFileInput("tabs");
+
+                int i = 0;
+                for (ret = fos.read(buffer); ret > 0; ret--) {
+                    c = (char) buffer[i];
+                    line += c;
+                    i++;
+
+                    // At every new line, add the previous one to our ArrayList.
+                    if (c == '\n') {
+                        lines.add(line);
+                        line = "";
+                    }
+                }
+                fos.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return lines;
+    }
+
+
     /**
      * Writes the TO DO in our file
      */
@@ -133,6 +169,45 @@ public class InternalFilesManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean hasDuplicates(ArrayList<String> list, String name)
+    {
+        int numCount = 0;
+        String compared = name + "\n";
+
+        for (String str : list) {
+            if (str.equals(compared)) numCount++;
+        }
+
+        if (numCount >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Writes the TO DO in our file
+     */
+    public boolean writeTabFile(String tab) {
+        try {
+            ArrayList<String> tabs = readTabFile();
+
+            // Check for duplicates
+            if (hasDuplicates(tabs, tab)) {
+                return false;
+            }
+
+            FileOutputStream fos = activity.openFileOutput("tabs", Context.MODE_APPEND);
+
+            // Sets title, content, date and if checked
+            fos.write(tab.getBytes());
+            fos.write('\n');
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     /**
@@ -238,7 +313,6 @@ public class InternalFilesManager {
                     splitted[2] = date;
                     splitted[3] = time;
 
-                    // TODO: find cleaner way to do it
                     String updatedLine = splitted[0] + " | " + splitted[1] + " | " +
                             splitted[2] + " | " + splitted[3] + " | " + splitted[4];
                     currentLine = updatedLine;

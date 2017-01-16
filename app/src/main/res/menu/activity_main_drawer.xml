@@ -6,28 +6,6 @@
             android:id="@+id/nav_general"
             android:icon="@mipmap/ic_launcher"
             android:title="@string/generalTab" />
-
-        <item
-            android:id="@+id/nav_daily"
-            android:icon="@mipmap/ic_launcher"
-            android:title="@string/dailyTab" />
-
-        <item
-            android:id="@+id/nav_groceries"
-            android:icon="@mipmap/ic_launcher"
-            android:title="@string/groceriesTab" />
-    </group>
-
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@mipmap/ic_launcher"
-            android:title="@string/aboutTab" />
-
-        <!--<item-->
-            <!--android:id="@+id/nav_settings"-->
-            <!--android:icon="@mipmap/settings_icon"-->
-            <!--android:title="@string/action_settings" />-->
     </group>
 
 </menu>
