@@ -17,13 +17,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import kade_c.taskforge.fragments.AboutFragment;
+import kade_c.taskforge.fragments.SettingsFragment;
 import kade_c.taskforge.fragments.ToDoFragment;
 
 /**
@@ -31,19 +33,24 @@ import kade_c.taskforge.fragments.ToDoFragment;
  */
 public class TaskForgeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    InternalFilesManager IFM;
-
-    int CONTENT_LAYOUT_ID = R.id.content_frame;
+    // Our File manager
+    private InternalFilesManager IFM;
 
     // Our Navigation Drawer.
-    DrawerLayout drawer;
+    private DrawerLayout drawer;
 
     // Our toggler for the Navigation Drawer.
-    ActionBarDrawerToggle toggle;
+    private ActionBarDrawerToggle toggle;
 
     protected NavigationView navigationView;
 
     private String email;
+
+    private ArrayList<String> tabs;
+
+    private boolean inputError;
+
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,10 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         displayTabs();
 
         setUpNavDrawer();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        setDrawerState(true);
     }
 
     /**
@@ -68,6 +79,72 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
+    }
+
+    /**
+     * Inflates our menu, adds items to the action bar
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
+        return true;
+    }
+
+    /**
+     * Shows or hides items in our Menu
+     */
+    public void displayMenu(boolean showMenu){
+        if (menu == null)
+            return;
+        menu.setGroupVisible(R.id.main_menu_group, showMenu);
+    }
+
+    /**
+     * ActionBar click handler
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_log_out) {
+            promptSignOut();
+            return true;
+        } else if (id == R.id.action_add_list) {
+            promptAddList();
+            return true;
+        } else if (id == R.id.action_delete_list) {
+            promptListDeletion();
+            return true;
+        } else if (id == R.id.action_settings) {
+            settings();
+            return true;
+        } else if (id == R.id.action_about) {
+            about();
+            return true;
+        } else if (id == android.R.id.home) {
+            finish();
+            TaskForgeActivity.this.overridePendingTransition(0, 0);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            setDrawerState(true);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
+        item.setCheckable(true);
+        if (displaySelectedScreen(item.getItemId(), item.getTitle().toString())) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            drawer.closeDrawer(GravityCompat.START);
+            if (item.getItemId() != R.id.nav_general)
+                navigationView.getMenu().findItem(R.id.nav_general).setChecked(false);
+        }
+        return true;
     }
 
     /**
@@ -93,113 +170,95 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
-     * Inflates our menu, adds items to the action bar
+     * Starts the about Fragment
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    /**
-     * ActionBar click handler
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_log_out) {
-            promptSignOut();
-            return true;
-        } else if (id == R.id.action_add_list) {
-            // TODO: Put add list icon in Nav Drawer
-            promptListName();
-        } else if (id == android.R.id.home) {
-            finish();
-            TaskForgeActivity.this.overridePendingTransition(0, 0);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            setDrawerState(true);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void about() {
+        this.replaceFragment(new AboutFragment());
     }
 
     /**
      * Starts the settings Fragment
      */
     private void settings() {
-        TaskForgeActivity.this.overridePendingTransition(0, 0);
-        Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, new SettingsFragment())
+                .commit();
+    }
+
+    /**
+     * Calls authentication Activity and signs out.
+     */
+    private void signOut() {
+        Intent i = new Intent(getApplicationContext(), AuthenticationActivity.class);
+        Bundle b = new Bundle();
+        b.putBoolean("SignOut", true);
+        i.putExtras(b);
         startActivity(i);
     }
 
     /**
-     * Checks which item has been selected and instantiates the corresponding Fragment.
-     * @param itemId id of the item selected.
-     * @return the fragment to be displayed.
+     * Displays a list of current available tabs to be deleted
      */
-    private Fragment prepareFragment(int itemId, String title) {
-        Fragment fragment;
-        Bundle bundle = new Bundle();
+    private void promptListDeletion() {
+        tabs = IFM.readTabFile();
 
-        bundle.putString("name", title);
-
-//        switch (itemId) {
-//            case R.id.nav_about:
-//                fragment = new AboutFragment();
-//                break;
-//            default:
-//                break;
-//        }
-
-        fragment = new ToDoFragment();
-        bundle.putString("email", email);
-
-        // Sets fragment argument
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-        item.setCheckable(true);
-        if (displaySelectedScreen(item.getItemId(), item.getTitle().toString())) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            drawer.closeDrawer(GravityCompat.START);
-            if (item.getItemId() != R.id.nav_general)
-                navigationView.getMenu().findItem(R.id.nav_general).setChecked(false);
+        // Check if there are lists to delete
+        if (tabs.size() == 0) {
+            Toast.makeText(TaskForgeActivity.this, "No lists found",
+                    Toast.LENGTH_LONG).show();
+            return;
         }
-        return true;
+
+        // Build dialog
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(TaskForgeActivity.this);
+        builderSingle.setIcon(R.mipmap.delete_icon);
+        builderSingle.setTitle("Delete list");
+
+        // Set ArrayAdapter to contain tab list
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(TaskForgeActivity.this, android.R.layout.select_dialog_singlechoice);
+        for (String tab : tabs) {
+            arrayAdapter.add(tab);
+        }
+
+        builderSingle
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Get name of the tab to delete
+                String tabName = arrayAdapter.getItem(which);
+                tabName = tabName.trim().replace("\n", "");
+
+                Toast.makeText(TaskForgeActivity.this, tabName + " deleted",
+                        Toast.LENGTH_LONG).show();
+
+                // Delete internal file related to tab deleted
+                IFM.deleteFile(tabName);
+
+                // Delete tab in tab file
+                IFM.deleteTab(which);
+
+                // Refresh activity
+                finish();
+                startActivity(getIntent());
+            }
+        });
+        builderSingle.show();
     }
-
-    /**
-     * Checks the selected fragments state and launches it.
-     */
-    private boolean displaySelectedScreen(int itemId, String title) {
-        // Launches Settings if selected
-//        if (itemId == R.id.nav_settings) {
-//            settings();
-//            return true;
-//        }
-
-        Fragment fragment;
-        fragment = prepareFragment(itemId, title);
-
-        this.replaceFragment(fragment);
-
-        return false;
-    }
-
 
     /**
      * Prompts user before sign out.
      */
     private void promptSignOut() {
         AlertDialog.Builder alert = new AlertDialog.Builder(TaskForgeActivity.this);
-        alert.setMessage("Sign out?");
+        alert.setTitle("Sign out?");
         alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
             @Override
@@ -223,14 +282,107 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
-     * Calls authentication Activity and signs out.
+     * Displays list name prompt
      */
-    private void signOut() {
-        Intent i = new Intent(getApplicationContext(), AuthenticationActivity.class);
-        Bundle b = new Bundle();
-        b.putBoolean("SignOut", true);
-        i.putExtras(b);
-        startActivity(i);
+    private void promptAddList() {
+        LayoutInflater li = LayoutInflater.from(this);
+
+        // Inflate dialog view
+        final View promptsView = li.inflate(R.layout.dialog_list_name_layout, null);
+
+        // Dialog builder
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+
+        alertDialogBuilder.setIcon(R.mipmap.add_icon);
+        alertDialogBuilder.setTitle("List name:");
+
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText titleInput = (EditText) promptsView
+                .findViewById(R.id.title_input);
+
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Add",
+                        new DialogInterface.OnClickListener() {
+
+                            @RequiresApi(api = Build.VERSION_CODES.M)
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                String tab = titleInput.getText().toString();
+
+                                if (tab.equals("")) {
+                                    titleInput.setError("Required");
+                                    inputError = true;
+                                } else {
+                                    titleInput.setError(null);
+                                    inputError = false;
+
+                                    // Add tab to file and to list
+                                    addNewTab(tab);
+
+                                    Toast.makeText(TaskForgeActivity.this, tab + " created",
+                                            Toast.LENGTH_LONG).show();
+
+                                    drawer.openDrawer(GravityCompat.START);
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                //If the error flag was set to true then show the dialog again
+                if (inputError) {
+                    alertDialog.show();
+                }
+            }
+        });
+    }
+
+    /**
+     * Checks which item has been selected and instantiates the corresponding Fragment.
+     * @return the fragment to be displayed.
+     */
+    private Fragment prepareFragment(String title) {
+        Fragment fragment;
+        Bundle bundle = new Bundle();
+
+        bundle.putString("name", title);
+        bundle.putString("email", email);
+
+        fragment = new ToDoFragment();
+
+        // Sets fragment argument
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    /**
+     * Checks the selected fragments state and launches it.
+     */
+    private boolean displaySelectedScreen(int itemId, String title) {
+        Fragment fragment;
+        fragment = prepareFragment(title);
+
+        this.replaceFragment(fragment);
+
+        return false;
     }
 
     /**
@@ -257,73 +409,19 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             toggle.setDrawerIndicatorEnabled(true);
             toggle.syncState();
-
         } else {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             toggle.setDrawerIndicatorEnabled(false);
             toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    TaskForgeActivity.this.overridePendingTransition(0, 0);
+                    finish();
                     onSupportNavigateUp();
                 }
             });
             toggle.syncState();
         }
-    }
-
-    /**
-     * Displays list name prompt
-     */
-    private void promptListName() {
-        LayoutInflater li = LayoutInflater.from(this);
-
-        // Inflate dialog view
-        final View promptsView = li.inflate(R.layout.dialog_list_name_layout, null);
-
-        // Dialog builder
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                this);
-
-        alertDialogBuilder.setView(promptsView);
-
-        final EditText titleInput = (EditText) promptsView
-                .findViewById(R.id.title_input);
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Add",
-                        new DialogInterface.OnClickListener() {
-                            @RequiresApi(api = Build.VERSION_CODES.M)
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                String tab = titleInput.getText().toString();
-
-                                // Add tab to file
-                                addNewTab(tab);
-
-                                // Add tab to menu
-//                                addTab(tab);
-
-                                dialog.dismiss();
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-    }
-
-    public void onDrawerOpened(View drawerView) {
-        displayTabs();
-        // Stop telling the user, he know how it works
     }
 
     /**
@@ -348,21 +446,12 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         menuItem.setIcon(R.mipmap.ic_launcher);
     }
 
-    public static boolean hasDuplicates(ArrayList<String> list, String name)
-    {
-        int numCount = 0;
-
-        for (String str : list) {
-            if (str.equals(name)) numCount++;
-        }
-
-        return numCount > 1;
-    }
-
-    // TODO: Make tabs deletable (long click or icon)
+    /**
+     * Adds tabs on our menu
+     */
     private void displayTabs() {
         // Check if already displayed
-        ArrayList<String> tabs = IFM.readTabFile();
+        tabs = IFM.readTabFile();
 
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navView.getMenu();

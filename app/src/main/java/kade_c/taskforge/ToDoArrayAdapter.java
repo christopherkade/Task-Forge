@@ -32,12 +32,12 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View rowView = inflater.inflate(R.layout.todo_list_layout, parent, false);
+        final View rowView = inflater.inflate(R.layout.todo_list_layout, parent, false);
 
         String currentTodo = values.get(position);
         String[] todoArray = currentTodo.split(" \\| ");
         String title = todoArray[0];
-        String content = todoArray[1];
+        final String content = todoArray[1];
         String date = todoArray[2];
         String time = todoArray[3];
         String checked = todoArray[4];

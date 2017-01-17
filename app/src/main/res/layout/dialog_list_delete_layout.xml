@@ -5,13 +5,10 @@
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_vertical_margin">
 
-    <EditText
-        android:id="@+id/title_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:inputType="text">
-        <requestFocus />
-    </EditText>
+   <ListView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content">
+
+   </ListView>
 
 </LinearLayout>

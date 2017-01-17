@@ -3,8 +3,6 @@ package kade_c.taskforge.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +29,12 @@ public class ToDoConsultFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_consult_todo, container, false);
 
-        // TODO: Set back arrow navigation
+        // TODO: Make back arrow nav go to previous fragment
+        ((TaskForgeActivity)getActivity()).setDrawerState(false);
+        ((TaskForgeActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Hide useless menu items
+        ((TaskForgeActivity)getActivity()).displayMenu(false);
 
         title = getArguments().getString("title");
         content = getArguments().getString("content");
@@ -47,16 +50,21 @@ public class ToDoConsultFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle(title);
+        getActivity().setTitle("Details");
     }
 
+    /**
+     * Displays consulted item's details
+     */
     private void setConsultDetails() {
+        TextView titleTv = (TextView) view.findViewById(R.id.consult_title);
         TextView dateTv = (TextView) view.findViewById(R.id.consult_date);
         TextView timeTv = (TextView) view.findViewById(R.id.consult_time);
         TextView contentTv = (TextView) view.findViewById(R.id.consult_content);
 
-        dateTv.setText(date);
-        timeTv.setText(time);
+        titleTv.setText(title);
+        dateTv.setText("The " + date);
+        timeTv.setText("At " + time);
         contentTv.setText(content);
     }
 

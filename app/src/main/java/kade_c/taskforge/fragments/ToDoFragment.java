@@ -1,11 +1,7 @@
 package kade_c.taskforge.fragments;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -79,7 +75,6 @@ public class ToDoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle(tabSelected);
     }
-
 
     /**
      * Inflates the context menu
@@ -415,8 +410,6 @@ public class ToDoFragment extends Fragment {
 
         // Get lines to display in current tab
         lines = IFM.readListFile();
-
-        // TODO: Only display files for good e-mail
 
         // Remove two first lines
         if (lines.size() > 0) {

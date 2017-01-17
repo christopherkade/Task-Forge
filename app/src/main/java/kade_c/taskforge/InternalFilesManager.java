@@ -3,7 +3,6 @@ package kade_c.taskforge;
 
 import android.app.Activity;
 import android.content.Context;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,6 +45,8 @@ public class InternalFilesManager {
         context = ctx;
         this.activity = activity;
         fileToOpen = filename;
+
+        fileToOpen = fileToOpen.replace("\n", "");
 
         //createListFiles();
     }
@@ -211,6 +212,16 @@ public class InternalFilesManager {
     }
 
     /**
+     * Deletes file passed as parameter
+     * @param fileToDelete
+     */
+    public void deleteFile(String fileToDelete) {
+        File dir = context.getFilesDir();
+        File file = new File(dir, fileToDelete);
+        boolean deleted = file.delete();
+    }
+
+    /**
      * Deletes a line in our list
      * @param lineToDelete line to be deleted
      */
@@ -218,7 +229,7 @@ public class InternalFilesManager {
         try {
             // Reads file and saves file without deck to be deleted in temporary file.
             File file = context.getFileStreamPath(fileToOpen);
-            FileOutputStream tempFile = activity.openFileOutput("temp_file", Context.MODE_PRIVATE);
+            FileOutputStream tempFile = activity.openFileOutput("temp_file_todo", Context.MODE_PRIVATE);
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String currentLine;
             int i = -1;
@@ -232,7 +243,7 @@ public class InternalFilesManager {
             reader.close();
 
             // Then rewrites the temp file in our deck file.
-            File tempFile2 = context.getFileStreamPath("temp_file");
+            File tempFile2 = context.getFileStreamPath("temp_file_todo");
             FileOutputStream fileToUpdate = activity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
             BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
 
@@ -246,6 +257,40 @@ public class InternalFilesManager {
             e.printStackTrace();
         }
     }
+
+    public void deleteTab(int lineToDelete) {
+        try {
+            // Reads file and saves file without deck to be deleted in temporary file.
+            File file = context.getFileStreamPath("tabs");
+            FileOutputStream tempFile = activity.openFileOutput("temp_file_list", Context.MODE_PRIVATE);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String currentLine;
+            int i = -1;
+
+            while ((currentLine = reader.readLine()) != null) {
+                i++;
+                if (i == lineToDelete) continue;
+                tempFile.write(currentLine.getBytes());
+                tempFile.write('\n');
+            }
+            reader.close();
+
+            // Then rewrites the temp file in our deck file.
+            File tempFile2 = context.getFileStreamPath("temp_file_list");
+            FileOutputStream fileToUpdate = activity.openFileOutput("tabs", Context.MODE_PRIVATE);
+            BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
+
+            while ((currentLine = tempFileReader.readLine()) != null) {
+                fileToUpdate.write(currentLine.getBytes());
+                fileToUpdate.write('\n');
+            }
+            tempFileReader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Changes the value of the checkbox for the right line

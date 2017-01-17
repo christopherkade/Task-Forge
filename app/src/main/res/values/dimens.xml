@@ -11,7 +11,10 @@
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="consult_text_size">50sp</dimen>
-    <dimen name="consult_content_text_size">30sp</dimen>
+    <dimen name="consult_title_text_size">50sp</dimen>
+    <dimen name="consult_content_text_size">20sp</dimen>
+    <dimen name="consult_date_text_size">20sp</dimen>
+    <dimen name="consult_time_text_size">20sp</dimen>
+
 
 </resources>

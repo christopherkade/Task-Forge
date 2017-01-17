@@ -17,7 +17,7 @@
     <string name="sign_in">Sign In</string>
 
     <!-- Task Forge -->
-    <string name="action_log_out">Log out</string>
+    <string name="action_log_out">Sign out</string>
 
     <!-- Nav. Drawer -->
     <string name="generalTab">General</string>
@@ -33,9 +33,18 @@
     <string name="email_text">E-mail</string>
     <string name="email_value">c.kade96@gmail.com</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Settings -->
     <string name="settings_theme">Theme:</string>
     <string name="settings_theme_type_light">Light</string>
     <string name="settings_theme_type_dark">Dark</string>
+    <string name="settings_delete_on_check">Delete item on checked</string>
+
+    <string name="action_add_list">Add list</string>
+
+    <string name="list_name_text">List name:</string>
+    <string name="action_delete_list">Delete list</string>
+    <string name="available_lists_text">Available lists:</string>
 
 
 </resources>

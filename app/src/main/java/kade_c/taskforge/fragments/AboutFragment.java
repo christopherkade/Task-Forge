@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import kade_c.taskforge.R;
+import kade_c.taskforge.TaskForgeActivity;
 
 public class AboutFragment extends Fragment {
 
@@ -24,6 +25,11 @@ public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_about, container, false);
+
+        ((TaskForgeActivity) getActivity()).setDrawerState(false);
+        ((TaskForgeActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ((TaskForgeActivity)getActivity()).displayMenu(false);
 
         setListeners();
 
