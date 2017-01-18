@@ -305,6 +305,13 @@ public class ToDoFragment extends Fragment {
      */
     private void buildDialog(AlertDialog.Builder alertDialogBuilder, View selectedView,
                              final String type, final int position) {
+        final TextView title = (TextView) selectedView.findViewById(R.id.title_text);
+        title.setText(getResources().getString(R.string.dialog_title));
+
+        final TextView contenu = (TextView) selectedView.findViewById(R.id.content_text);
+        contenu.setText(getResources().getString(R.string.dialog_content));
+
+
         final EditText titleInput = (EditText) selectedView
                 .findViewById(R.id.title_input);
         final EditText contentInput = (EditText) selectedView
@@ -314,7 +321,7 @@ public class ToDoFragment extends Fragment {
 
         alertDialogBuilder
                 .setCancelable(false)
-                .setPositiveButton("Add",
+                .setPositiveButton(getResources().getString(R.string.button_add),
                         new DialogInterface.OnClickListener() {
                             @RequiresApi(api = Build.VERSION_CODES.M)
                             public void onClick(DialogInterface dialog, int id) {
@@ -347,7 +354,7 @@ public class ToDoFragment extends Fragment {
                                 dialog.dismiss();
                             }
                         })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getResources().getString(R.string.button_cancel),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
                                 inputError = false;

@@ -12,4 +12,13 @@
         android:title="@string/settings_move_item_on_check"
         android:defaultValue="false" />
 
+    <ListPreference
+        android:key="pref_language"
+        android:title="@string/settings_language"
+        android:entries="@array/array_languages"
+        android:entryValues="@array/array_languages"
+        android:defaultValue="@string/language_english"
+        android:icon="@mipmap/globe_icon"
+        android:summary="@string/language_english"/>
+
 </PreferenceScreen>

@@ -33,6 +33,7 @@
     <string name="settings_delete_on_check">Supprimer les tâches cochées</string>
     <string name="settings_move_item_on_check">Déplacer les tâches finies à la fin</string>
     <string name="settings_title">Paramètres</string>
+    <string name="settings_language">Langue</string>
 
     <string name="action_add_list">Ajouter une liste</string>
 
@@ -40,27 +41,29 @@
     <string name="action_delete_list">Supprimer une liste</string>
     <string name="available_lists_text">Listes disponibles:</string>
 
+    <!-- Dialog -->
     <string name="dialog_title">Titre:</string>
     <string name="dialog_content">Contenu:</string>
     <string name="dialog_date">Date:</string>
     <string name="dialog_list_name">Nom de la liste:</string>
 
-
-    <string name="toast_no_list_found">Listes non trouvées</string>
-
+    <!-- Text -->
     <string name="deleted_text">supprimé</string>
     <string name="created_text">créée</string>
+    <string name="text_required">Requis</string>
 
+    <!-- Buttons -->
     <string name="button_yes">Oui</string>
     <string name="button_no">Non</string>
-
     <string name="button_cancel">Annuler</string>
     <string name="button_add">Ajouter</string>
-    <string name="text_required">Requis</string>
+
+    <!-- Toasts -->
     <string name="toast_already_exists">Existe déjà</string>
+    <string name="toast_no_list_found">Listes non trouvées</string>
 
-
-
-
+    <!-- Languages -->
+    <string name="language_english">Anglais</string>
+    <string name="language_french">Français</string>
 
 </resources>
