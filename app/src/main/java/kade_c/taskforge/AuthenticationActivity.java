@@ -328,24 +328,17 @@ public class AuthenticationActivity extends AppCompatActivity implements
 
         // Create account button
         if (i == R.id.email_create_account_button) {
-            Button button = (Button) findViewById(R.id.email_create_account_button);
+            email = mEmailField.getText().toString();
+            password = mPasswordField.getText().toString();
 
-            if (!button.getText().equals(getResources().getString(R.string.name_button_text))) {
-                email = mEmailField.getText().toString();
-                password = mPasswordField.getText().toString();
-
-                if (!validateForm()) {
-                    return;
-                }
-                setUserNameUI();
-            } else {
-                if (!validateUserName()) {
-                    return;
-                }
-                createAccount(this.email, this.password);
+            if (!validateForm()) {
+                return;
             }
-            // Sign in button
-        } else if (i == R.id.email_sign_in_button) {
+            createAccount(email, password);
+        }
+
+        // Sign in button
+        if (i == R.id.email_sign_in_button) {
             email = mEmailField.getText().toString();
             password = mPasswordField.getText().toString();
 
@@ -353,19 +346,12 @@ public class AuthenticationActivity extends AppCompatActivity implements
                 return;
             }
 
-            Button signInButton = (Button) findViewById(R.id.email_sign_in_button);
+//            Button signInButton = (Button) findViewById(R.id.email_sign_in_button);
 
-            if (signInButton.getText().equals("Sign In")) {
-                signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-            } else {
-                if (!mEmailField.getText().toString().equals(""))
-                    resetPassword(mEmailField.getText().toString());
-            }
-            // Forgot password button
+//            if (signInButton.getText().equals("Sign In")) {
+            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+//            }
         }
-// else if (i == R.id.forgot_password_text) {
-//            setResetPasswordUI();
-//        }
     }
 
     public ProgressDialog mProgressDialog;

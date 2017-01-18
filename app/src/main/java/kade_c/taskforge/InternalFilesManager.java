@@ -384,4 +384,44 @@ public class InternalFilesManager {
             e.printStackTrace();
         }
     }
+
+    public void moveItemToEnd(int lineToMove) {
+        String line = "";
+
+        try {
+            // Reads file and saves file without deck to be deleted in temporary file.
+            File file = context.getFileStreamPath(fileToOpen);
+            FileOutputStream tempFile = activity.openFileOutput("temp_file_todo", Context.MODE_PRIVATE);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String currentLine;
+            int i = -1;
+
+            while ((currentLine = reader.readLine()) != null) {
+                i++;
+                if (i == lineToMove) {
+                    line = currentLine;
+                } else {
+                    tempFile.write(currentLine.getBytes());
+                    tempFile.write('\n');
+                }
+            }
+            tempFile.write(line.getBytes());
+            tempFile.write('\n');
+            reader.close();
+
+            // Then rewrites the temp file in our deck file.
+            File tempFile2 = context.getFileStreamPath("temp_file_todo");
+            FileOutputStream fileToUpdate = activity.openFileOutput(fileToOpen, Context.MODE_PRIVATE);
+            BufferedReader tempFileReader = new BufferedReader(new FileReader(tempFile2));
+
+            while ((currentLine = tempFileReader.readLine()) != null) {
+                fileToUpdate.write(currentLine.getBytes());
+                fileToUpdate.write('\n');
+            }
+            tempFileReader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

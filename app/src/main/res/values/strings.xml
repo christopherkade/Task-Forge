@@ -35,16 +35,37 @@
     <string name="action_settings">Settings</string>
 
     <!-- Settings -->
+    <string name="settings_title">Settings</string>
     <string name="settings_theme">Theme:</string>
-    <string name="settings_theme_type_light">Light</string>
-    <string name="settings_theme_type_dark">Dark</string>
     <string name="settings_delete_on_check">Delete item on checked</string>
+    <string name="settings_move_item_on_check">Move completed tasks to end</string>
 
     <string name="action_add_list">Add list</string>
 
     <string name="list_name_text">List name:</string>
     <string name="action_delete_list">Delete list</string>
     <string name="available_lists_text">Available lists:</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_title">Title:</string>
+    <string name="dialog_content">Content:</string>
+    <string name="dialog_date">Date:</string>
+    <string name="dialog_list_name">List name:</string>
+
+    <!-- Text -->
+    <string name="deleted_text">deleted</string>
+    <string name="created_text">created</string>
+    <string name="text_required">Required</string>
+
+    <!-- Buttons -->
+    <string name="button_yes">Yes</string>
+    <string name="button_no">No</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_add">Add</string>
+
+    <!-- Toast -->
+    <string name="toast_already_exists">Already exists</string>
+    <string name="toast_no_list_found">No list found</string>
 
 
 </resources>

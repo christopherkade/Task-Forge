@@ -1,5 +1,10 @@
 package kade_c.taskforge;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -8,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,6 +30,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import kade_c.taskforge.fragments.AboutFragment;
 import kade_c.taskforge.fragments.SettingsFragment;
@@ -68,6 +76,20 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         setDrawerState(true);
+    }
+
+    // TODO: Work on notifications
+    public void notifyAtTime() {
+        Intent myIntent = new Intent(this, Notification.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 11);
+        calendar.set(Calendar.MINUTE, 54);
+        calendar.set(Calendar.SECOND, 00);
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000 , pendingIntent);
     }
 
     /**
@@ -166,7 +188,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         // Sets the 'General' tab as selected by default.
         navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
-        displaySelectedScreen(R.id.nav_general, "General");
+        displaySelectedScreen(R.id.nav_general, getResources().getString(R.string.generalTab));
     }
 
     /**
@@ -204,7 +226,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         // Check if there are lists to delete
         if (tabs.size() == 0) {
-            Toast.makeText(TaskForgeActivity.this, "No lists found",
+            Toast.makeText(TaskForgeActivity.this, getResources().getString(R.string.toast_no_list_found),
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -212,7 +234,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         // Build dialog
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(TaskForgeActivity.this);
         builderSingle.setIcon(R.mipmap.delete_icon);
-        builderSingle.setTitle("Delete list");
+        builderSingle.setTitle(getResources().getString(R.string.action_delete_list));
 
         // Set ArrayAdapter to contain tab list
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(TaskForgeActivity.this, android.R.layout.select_dialog_singlechoice);
@@ -221,7 +243,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         }
 
         builderSingle
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getResources().getString(R.string.button_cancel),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
                                 dialog.cancel();
@@ -236,7 +258,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
                 String tabName = arrayAdapter.getItem(which);
                 tabName = tabName.trim().replace("\n", "");
 
-                Toast.makeText(TaskForgeActivity.this, tabName + " deleted",
+                Toast.makeText(TaskForgeActivity.this, tabName + " " + getResources().getString(R.string.deleted_text),
                         Toast.LENGTH_LONG).show();
 
                 // Delete internal file related to tab deleted
@@ -258,8 +280,8 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
      */
     private void promptSignOut() {
         AlertDialog.Builder alert = new AlertDialog.Builder(TaskForgeActivity.this);
-        alert.setTitle("Sign out?");
-        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        alert.setTitle(getResources().getString(R.string.action_log_out) + "?");
+        alert.setNegativeButton(getResources().getString(R.string.button_no), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -267,7 +289,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             }
         });
 
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(getResources().getString(R.string.button_yes), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -295,7 +317,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
                 this);
 
         alertDialogBuilder.setIcon(R.mipmap.add_icon);
-        alertDialogBuilder.setTitle("List name:");
+        alertDialogBuilder.setTitle(getResources().getString(R.string.dialog_list_name));
 
         alertDialogBuilder.setView(promptsView);
 
@@ -304,7 +326,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         alertDialogBuilder
                 .setCancelable(false)
-                .setPositiveButton("Add",
+                .setPositiveButton(getResources().getString(R.string.button_add),
                         new DialogInterface.OnClickListener() {
 
                             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -313,16 +335,15 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
                                 String tab = titleInput.getText().toString();
 
                                 if (tab.equals("")) {
-                                    titleInput.setError("Required");
+                                    titleInput.setError(getResources().getString(R.string.text_required));
                                     inputError = true;
                                 } else {
                                     titleInput.setError(null);
-                                    inputError = false;
 
                                     // Add tab to file and to list
                                     addNewTab(tab);
 
-                                    Toast.makeText(TaskForgeActivity.this, tab + " created",
+                                    Toast.makeText(TaskForgeActivity.this, tab + " " + getResources().getString(R.string.created_text),
                                             Toast.LENGTH_LONG).show();
 
                                     drawer.openDrawer(GravityCompat.START);
@@ -330,9 +351,10 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
                                 dialog.dismiss();
                             }
                         })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getResources().getString(R.string.button_cancel),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
+                                inputError = false;
                                 dialog.cancel();
                             }
                         });
@@ -434,7 +456,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         // Add tab to file, but check for duplicated first
         if (!IFM.writeTabFile(tabName)) {
-            Toast.makeText(this, "Already exists",
+            Toast.makeText(this, getResources().getString(R.string.toast_already_exists),
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -460,5 +482,38 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             MenuItem menuItem = menu.add(tab);
             menuItem.setIcon(R.mipmap.ic_launcher);
         }
+    }
+
+    /**
+     * Sends a notification to the user
+     */
+    private void notification(String title, String content) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(title)
+                        .setContentText(content);
+// Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, TaskForgeActivity.class);
+
+// The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+// Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(TaskForgeActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+        mNotificationManager.notify(1, mBuilder.build());
     }
 }

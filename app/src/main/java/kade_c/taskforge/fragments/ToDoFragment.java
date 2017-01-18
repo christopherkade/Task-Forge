@@ -29,7 +29,6 @@ import java.util.Date;
 
 import kade_c.taskforge.InternalFilesManager;
 import kade_c.taskforge.R;
-import kade_c.taskforge.Receiver;
 import kade_c.taskforge.TaskForgeActivity;
 import kade_c.taskforge.ToDoArrayAdapter;
 
@@ -63,9 +62,8 @@ public class ToDoFragment extends Fragment {
         }
 
         refreshList();
-
         handleFAB();
-        handleListViewActions();
+        handleListViewClick();
 
         return view;
     }
@@ -100,11 +98,9 @@ public class ToDoFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.edit:
                 editTODO(index);
-                // your first action code
                 return true;
             case R.id.delete:
                 deleteTODO(index);
-                // your second action code
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -127,9 +123,9 @@ public class ToDoFragment extends Fragment {
     }
 
     /**
-     * Handles the listeners for our ListView (long click and click)
+     * Catches clicks on the To do list
      */
-    private void handleListViewActions() {
+    private void handleListViewClick() {
         final ListView list = (ListView) view.findViewById(R.id.list);
 
         registerForContextMenu(list);
@@ -165,7 +161,6 @@ public class ToDoFragment extends Fragment {
 
     /**
      * Deletes the item at position
-     * @param position
      */
     private void deleteTODO(int position) {
         IFM.deleteItem(position);
@@ -403,7 +398,7 @@ public class ToDoFragment extends Fragment {
     /**
      * Get lines in internal files and set them into the ListView
      */
-    private void refreshList() {
+    public void refreshList() {
         ListView mListView = (ListView) view.findViewById(R.id.list);
         ArrayList<String> lines;
         IFM = new InternalFilesManager(getContext(), getActivity(), tabSelected, email);
@@ -419,7 +414,7 @@ public class ToDoFragment extends Fragment {
                 lines.remove(0);
         }
 
-        final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines, IFM);
+        final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines, IFM, this);
         mListView.setAdapter(adapter);
     }
 }

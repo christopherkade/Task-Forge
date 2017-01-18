@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Task Forge</string>
+
+    <!-- Authentication -->
+    <string name="auth_failed">L\'authentification a échoué</string>
+    <string name="name_button_text">Nom</string>
+    <string name="signed_out">Déconnexion</string>
+    <string name="create_account">Créer un compte</string>
+    <string name="loading">Chargement…</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Mot de passe</string>
+    <string name="name_hint">e.g: Christophe</string>
+    <string name="sign_in">Connexion</string>
+
+    <!-- Task Forge -->
+    <string name="action_log_out">Déconnexion</string>
+
+    <!-- Nav. Drawer -->
+    <string name="generalTab">Général</string>
+    <string name="aboutTab">A propos</string>
+    <string name="navigation_drawer_open">Ouvrir tiroir de navigation</string>
+    <string name="navigation_drawer_close">Fermer tiroir de navigation</string>
+
+    <!-- About -->
+    <string name="developedBy_text">Développé par</string>
+    <string name="developerName_text">Christopher Kadé</string>
+    <string name="email_text">E-mail</string>
+    <string name="email_value">c.kade96@gmail.com</string>
+    <string name="action_settings">Paramètres</string>
+
+    <!-- Settings -->
+    <string name="settings_delete_on_check">Supprimer les tâches cochées</string>
+    <string name="settings_move_item_on_check">Déplacer les tâches finies à la fin</string>
+    <string name="settings_title">Paramètres</string>
+
+    <string name="action_add_list">Ajouter une liste</string>
+
+    <string name="list_name_text">Nom de la liste:</string>
+    <string name="action_delete_list">Supprimer une liste</string>
+    <string name="available_lists_text">Listes disponibles:</string>
+
+    <string name="dialog_title">Titre:</string>
+    <string name="dialog_content">Contenu:</string>
+    <string name="dialog_date">Date:</string>
+    <string name="dialog_list_name">Nom de la liste:</string>
+
+
+    <string name="toast_no_list_found">Listes non trouvées</string>
+
+    <string name="deleted_text">supprimé</string>
+    <string name="created_text">créée</string>
+
+    <string name="button_yes">Oui</string>
+    <string name="button_no">Non</string>
+
+    <string name="button_cancel">Annuler</string>
+    <string name="button_add">Ajouter</string>
+    <string name="text_required">Requis</string>
+    <string name="toast_already_exists">Existe déjà</string>
+
+
+
+
+
+</resources>

@@ -3,8 +3,13 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
     <CheckBoxPreference
-        android:key="deleteOnCheck"
+        android:key="pref_delOnCheck"
         android:title="@string/settings_delete_on_check"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="pref_moveOnCheck"
+        android:title="@string/settings_move_item_on_check"
         android:defaultValue="false" />
 
 </PreferenceScreen>

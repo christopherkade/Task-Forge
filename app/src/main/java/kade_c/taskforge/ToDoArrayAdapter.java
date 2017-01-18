@@ -1,7 +1,10 @@
 package kade_c.taskforge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +14,22 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import kade_c.taskforge.fragments.SettingsFragment;
+import kade_c.taskforge.fragments.ToDoFragment;
+
 /**
  * Adapter for our To Do ListView
  */
 public class ToDoArrayAdapter extends ArrayAdapter<String> {
     private final Context context;
+    private final Fragment fContext;
     private final ArrayList<String> values;
     private InternalFilesManager IFM;
 
-    public ToDoArrayAdapter(Context context, ArrayList<String> values, InternalFilesManager IFM) {
+    public ToDoArrayAdapter(Context context, ArrayList<String> values, InternalFilesManager IFM, Fragment fContext) {
         super(context, -1, values);
         this.context = context;
+        this.fContext = fContext;
         this.values = values;
         this.IFM = IFM;
     }
@@ -69,6 +77,19 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
             public void onClick(View arg0) {
                 final boolean isChecked = checkBox.isChecked();
                 IFM.changeCheckBoxState(position, isChecked);
+
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+                Boolean deleteOnCheckPref = sharedPref.getBoolean(SettingsFragment.KEY_PREF_DEL_ON_CHECK, false);
+                Boolean moveOnCheckPref = sharedPref.getBoolean(SettingsFragment.KEY_PREF_MOVE_ON_CHECK, false);
+
+                // If Delete on check is set, delete item and refresh list
+                if (deleteOnCheckPref && isChecked) {
+                    IFM.deleteItem(position);
+                    ((ToDoFragment)fContext).refreshList();
+                } else if (moveOnCheckPref && isChecked) {
+                    IFM.moveItemToEnd(position);
+                    ((ToDoFragment)fContext).refreshList();
+                }
             }
         });
 
