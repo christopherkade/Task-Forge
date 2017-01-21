@@ -41,11 +41,8 @@ public class ToDoFragment extends Fragment {
     private View view;
 
     private String tabSelected;
-
     private InternalFilesManager IFM;
-
     private ArrayList<String> input;
-
     private boolean inputError;
 
     @Nullable
@@ -180,7 +177,7 @@ public class ToDoFragment extends Fragment {
     }
 
     /**
-     * Handles edition (Dialog...)
+     * Handles edition dialog
      */
     private void editTODO(final int position) {
         input = new ArrayList<>();
@@ -255,7 +252,7 @@ public class ToDoFragment extends Fragment {
     }
 
     /**
-     * Handles the TO DO Dialog
+     * Handles creation dialog
      */
     private void createTODODialog() {
         LayoutInflater li = LayoutInflater.from(getContext());

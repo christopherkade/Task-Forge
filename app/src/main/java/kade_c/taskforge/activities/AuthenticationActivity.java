@@ -25,7 +25,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 import kade_c.taskforge.R;
 import kade_c.taskforge.fragments.SettingsFragment;
@@ -88,8 +87,23 @@ public class AuthenticationActivity extends AppCompatActivity implements
         };
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hideProgressDialog();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
     /**
-     * One app launch, set app to the one defined in the preferences.
+     * On app launch, set language to the one defined in the preferences.
      */
     private void setLanguage() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -112,21 +126,9 @@ public class AuthenticationActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        hideProgressDialog();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
+    /**
+     * Creates user account
+     */
     private void createAccount(String email, String password) {
         showProgressDialog();
 
@@ -150,6 +152,9 @@ public class AuthenticationActivity extends AppCompatActivity implements
                 });
     }
 
+    /**
+     * Signs user in
+     */
     private void signIn(final String email, String password) {
         showProgressDialog();
 
@@ -213,27 +218,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
         return valid;
     }
 
-    /**
-     * Displays elements necessary for user name input
-     */
-    private void setUserNameUI() {
-        hideProgressDialog();
-
-        EditText nameInput = (EditText) findViewById(R.id.field_email);
-        nameInput.setVisibility(View.VISIBLE);
-        nameInput.setHint(R.string.name_hint);
-        nameInput.setText("");
-
-        Button button = (Button) findViewById(R.id.email_create_account_button);
-        button.setText(R.string.name_button_text);
-        button.setVisibility(View.VISIBLE);
-
-        EditText fieldPassword = (EditText) findViewById(R.id.field_password);
-        fieldPassword.setVisibility(View.GONE);
-
-        findViewById(R.id.email_sign_in_button).setVisibility(View.GONE);
-    }
-
     private void updateUI(FirebaseUser user, boolean reset) {
         hideProgressDialog();
 
@@ -254,7 +238,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
             findViewById(R.id.email_create_account_button).setVisibility(View.VISIBLE);
             findViewById(R.id.email_sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.field_password).setVisibility(View.VISIBLE);
-//            findViewById(R.id.forgot_password_text).setVisibility(View.VISIBLE);
         } else if (user != null) {
             startTaskForge();
         } else {
@@ -306,11 +289,7 @@ public class AuthenticationActivity extends AppCompatActivity implements
                 return;
             }
 
-//            Button signInButton = (Button) findViewById(R.id.email_sign_in_button);
-
-//            if (signInButton.getText().equals("Sign In")) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-//            }
         }
     }
 

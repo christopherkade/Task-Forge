@@ -137,7 +137,7 @@ public class InternalFilesManager {
         }
     }
 
-    public static boolean hasDuplicates(ArrayList<String> list, String name)
+    private static boolean hasDuplicates(ArrayList<String> list, String name)
     {
         int numCount = 0;
         String compared = name + "\n";

@@ -44,7 +44,7 @@ public class SettingsFragment extends PreferenceFragment {
                 preference.setSummary(selectedLanguage);
 
                 // Change language
-                Locale locale = null;
+                Locale locale;
                 if (selectedLanguage.equals("French")) {
                     locale = new Locale("fr");
                 } else {
