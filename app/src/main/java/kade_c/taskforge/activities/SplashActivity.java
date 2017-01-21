@@ -1,4 +1,4 @@
-package kade_c.taskforge;
+package kade_c.taskforge.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

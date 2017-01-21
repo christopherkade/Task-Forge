@@ -12,7 +12,7 @@ import android.view.View;
 import java.util.Locale;
 
 import kade_c.taskforge.R;
-import kade_c.taskforge.TaskForgeActivity;
+import kade_c.taskforge.activities.TaskForgeActivity;
 
 /**
  * Settings Fragment, handles basic settings for our To do list app
@@ -55,11 +55,10 @@ public class SettingsFragment extends PreferenceFragment {
                 config.locale = locale;
                 getActivity().getApplicationContext().getResources().updateConfiguration(config, null);
 
+                // Refresh view
                 getFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, new SettingsFragment())
                         .commit();
-
-//                getActivity().getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
                 return true;
             }
         });

@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import kade_c.taskforge.InternalFilesManager;
+import kade_c.taskforge.utils.InternalFilesManager;
 import kade_c.taskforge.R;
-import kade_c.taskforge.TaskForgeActivity;
-import kade_c.taskforge.ToDoArrayAdapter;
+import kade_c.taskforge.activities.TaskForgeActivity;
+import kade_c.taskforge.utils.ToDoArrayAdapter;
 
 
 /**

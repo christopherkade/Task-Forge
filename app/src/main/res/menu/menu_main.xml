@@ -1,7 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="trakr.kade_c.test.MainActivity">
+    tools:context="trakr.kade_c.test.MainActivity"
+    android:id="@+id/action_menu">
 
     <group
         android:id="@+id/main_menu_group">
@@ -20,6 +21,10 @@
             android:id="@+id/action_settings"
             android:icon="@mipmap/settings_icon"
             android:title="@string/action_settings" />
+
+        <item
+            android:id="@+id/action_tutorial"
+            android:title="@string/action_tutorial"/>
 
         <item
             android:id="@+id/action_about"

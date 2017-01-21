@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import kade_c.taskforge.R;
-import kade_c.taskforge.TaskForgeActivity;
+import kade_c.taskforge.activities.TaskForgeActivity;
 
 /**
  * Called when user clicks on a To do item.

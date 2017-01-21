@@ -1,4 +1,4 @@
-package kade_c.taskforge;
+package kade_c.taskforge.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +22,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+
+import kade_c.taskforge.R;
 
 /**
  * Handles user authentication with Firebase.
@@ -117,7 +118,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
                             Toast.makeText(AuthenticationActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
                         }
-
                         hideProgressDialog();
                     }
                 })
@@ -169,25 +169,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
     }
 
     /**
-     * Sends password reset e-mail to email given as parameter
-     */
-    private void resetPassword(String email) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-
-        auth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(AuthenticationActivity.this, R.string.password_reset_toast,
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-        updateUI(null, true);
-    }
-
-    /**
      * Checks user input validity
      */
     private boolean validateForm() {
@@ -230,48 +211,6 @@ public class AuthenticationActivity extends AppCompatActivity implements
         fieldPassword.setVisibility(View.GONE);
 
         findViewById(R.id.email_sign_in_button).setVisibility(View.GONE);
-    }
-
-    /**
-     * Displays elements necessary for password reset
-     */
-    private void setResetPasswordUI() {
-        hideProgressDialog();
-
-        mStatusTextView.setText(R.string.password_reset_email);
-
-        findViewById(R.id.email_create_account_button).setVisibility(View.GONE);
-        findViewById(R.id.field_password).setVisibility(View.GONE);
-//        findViewById(R.id.forgot_password_text).setVisibility(View.GONE);
-        findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
-        findViewById(R.id.email_sign_in_button).setVisibility(View.VISIBLE);
-
-        Button signInButton = (Button)findViewById(R.id.email_sign_in_button);
-        signInButton.setText(R.string.password_reset_button_text);
-
-        findViewById(R.id.email_sign_in_button).setVisibility(View.VISIBLE);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    /**
-     * Checks username validity
-     * @return
-     */
-    private boolean validateUserName() {
-        EditText nameInput = (EditText) findViewById(R.id.field_email);
-
-        String name = nameInput.getText().toString();
-        this.name = name;
-        if (name.equals("")) {
-            mEmailField.setError("Required.");
-            return false;
-        }
-        else {
-            mEmailField.setError(null);
-        }
-
-        return true;
     }
 
     private void updateUI(FirebaseUser user, boolean reset) {

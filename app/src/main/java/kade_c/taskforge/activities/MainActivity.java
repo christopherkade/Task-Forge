@@ -1,4 +1,4 @@
-package kade_c.taskforge;
+package kade_c.taskforge.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    /**
+     * One app launch, set app to the one defined in the preferences.
+     */
     private void setLanguage() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Locale locale = null;

@@ -15,6 +15,7 @@
 
     <!-- Task Forge -->
     <string name="action_log_out">Déconnexion</string>
+    <string name="action_tutorial">Tutoriel</string>
 
     <!-- Nav. Drawer -->
     <string name="generalTab">Général</string>
@@ -66,4 +67,16 @@
     <string name="language_english">Anglais</string>
     <string name="language_french">Français</string>
 
+
+    <!-- Tutoriel -->
+    <string name="tutorial_fab_title">Création d\'événements</string>
+    <string name="tutorial_fab_description">Cliquez sur ce bouton pour créer des événements</string>
+    <string name="tutorial_list_title">Edition, suppression et détails</string>
+    <string name="tutorial_list_description">Vous pouvez éditer, supprimer et consulter en détail vos événements en cliquant ici</string>
+    <string name="tutorial_list_creation_title">Création de liste</string>
+    <string name="tutorial_list_creation_description">Vous pouvez organiser vos événements en listes en cliquant ici</string>
+    <string name="tutorial_list_deletion_title">Suppression de liste</string>
+    <string name="tutorial_list_deletion_description">Vous pouvez supprimer une liste en cliquant ici</string>
+    <string name="tutorial_list_navigation_title">Navigation</string>
+    <string name="tutorial_list_navigation_description">Vous pouvez naviguer à travers vos listes en cliquant ici</string>
 </resources>

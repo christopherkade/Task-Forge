@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import kade_c.taskforge.R;
-import kade_c.taskforge.TaskForgeActivity;
+import kade_c.taskforge.activities.TaskForgeActivity;
 
 public class AboutFragment extends Fragment {
 

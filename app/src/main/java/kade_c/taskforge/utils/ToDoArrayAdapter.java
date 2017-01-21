@@ -1,4 +1,4 @@
-package kade_c.taskforge;
+package kade_c.taskforge.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import kade_c.taskforge.R;
 import kade_c.taskforge.fragments.SettingsFragment;
 import kade_c.taskforge.fragments.ToDoFragment;
 

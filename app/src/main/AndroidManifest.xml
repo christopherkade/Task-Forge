@@ -2,24 +2,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kade_c.taskforge">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".AuthenticationActivity"
+        <activity android:name=".activities.AuthenticationActivity"
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,13 +30,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".TaskForgeActivity" />
-
-        <uses-permission android:name="android.permission.VIBRATE" />
-        <uses-permission android:name="android.permission.WAKE_LOCK" />
-        <service android:name=".Receiver" android:enabled="true">
-            <intent-filter> <action android:name="NOTIFICATION_SERVICE" /></intent-filter>
-        </service>
+        <activity android:name=".activities.TaskForgeActivity" />
     </application>
 
 </manifest>

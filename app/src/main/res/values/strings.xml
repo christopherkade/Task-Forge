@@ -2,27 +2,22 @@
     <string name="app_name">Task Forge</string>
 
     <!-- Authentication -->
-    <string name="password_reset_toast">Password reset e-mail sent</string>
     <string name="auth_failed">Authentication failed</string>
     <string name="name_button_text">Set name</string>
-    <string name="password_reset_email">Enter your email address and we will send you a link to reset your password.</string>
-    <string name="password_reset_button_text">Send email</string>
     <string name="signed_out">Signed Out</string>
     <string name="create_account">Create Account</string>
     <string name="loading">Loading…</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="forgot_password_text">Forgot Password?</string>
     <string name="name_hint">e.g: Chris</string>
     <string name="sign_in">Sign In</string>
 
     <!-- Task Forge -->
     <string name="action_log_out">Sign out</string>
+    <string name="action_tutorial">Tutorial</string>
 
     <!-- Nav. Drawer -->
     <string name="generalTab">General</string>
-    <string name="dailyTab">Daily</string>
-    <string name="groceriesTab">Groceries</string>
     <string name="aboutTab">About</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -36,7 +31,6 @@
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
-    <string name="settings_theme">Theme:</string>
     <string name="settings_delete_on_check">Delete item on checked</string>
     <string name="settings_move_item_on_check">Move completed tasks to end</string>
     <string name="settings_language">Language</string>
@@ -72,4 +66,15 @@
     <string name="language_english">English</string>
     <string name="language_french">French</string>
 
+    <!-- Tutorial -->
+    <string name="tutorial_fab_title">Event creation</string>
+    <string name="tutorial_fab_description">You may click on this button to create events</string>
+    <string name="tutorial_list_title">Edition, deletion and details</string>
+    <string name="tutorial_list_description">You may edit, delete or view events in detail by clicking on them in the list</string>
+    <string name="tutorial_list_creation_title">List creation</string>
+    <string name="tutorial_list_creation_description">You may organize your events in lists by clicking here</string>
+    <string name="tutorial_list_deletion_title">List deletion</string>
+    <string name="tutorial_list_deletion_description">You may delete unwanted lists by clicking here</string>
+    <string name="tutorial_list_navigation_title">List navigation</string>
+    <string name="tutorial_list_navigation_description">You may navigate through your lists by clicking on this button</string>
 </resources>
