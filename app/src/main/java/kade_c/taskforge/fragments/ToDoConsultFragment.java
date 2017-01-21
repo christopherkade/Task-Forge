@@ -22,14 +22,12 @@ public class ToDoConsultFragment extends Fragment {
     private String content;
     private String date;
     private String time;
-    private String tab;
 
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_consult_todo, container, false);
 
-        // TODO: Make back arrow nav go to previous fragment
         ((TaskForgeActivity)getActivity()).setDrawerState(false);
         ((TaskForgeActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -40,7 +38,6 @@ public class ToDoConsultFragment extends Fragment {
         content = getArguments().getString("content");
         date = getArguments().getString("date");
         time = getArguments().getString("time");
-        tab = getArguments().getString("tab");
 
         setConsultDetails();
 
@@ -63,9 +60,8 @@ public class ToDoConsultFragment extends Fragment {
         TextView contentTv = (TextView) view.findViewById(R.id.consult_content);
 
         titleTv.setText(title);
-        dateTv.setText("The " + date);
-        timeTv.setText("At " + time);
+        dateTv.setText(getResources().getString(R.string.dialog_the) + " " + date);
+        timeTv.setText(getResources().getString(R.string.dialog_at) + " " + time);
         contentTv.setText(content);
     }
-
 }

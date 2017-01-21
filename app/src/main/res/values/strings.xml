@@ -44,7 +44,7 @@
     <!-- Dialogs -->
     <string name="dialog_title">Title:</string>
     <string name="dialog_content">Content:</string>
-    <string name="dialog_date">Date:</string>
+    <string name="dialog_date">DD/MM/YYYY</string>
     <string name="dialog_list_name">List name:</string>
 
     <!-- Text -->
@@ -77,4 +77,8 @@
     <string name="tutorial_list_deletion_description">You may delete unwanted lists by clicking here</string>
     <string name="tutorial_list_navigation_title">List navigation</string>
     <string name="tutorial_list_navigation_description">You may navigate through your lists by clicking on this button</string>
+
+    <string name="dialog_the">The</string>
+    <string name="dialog_at">At</string>
+    <string name="content_desc_calendar">date_selection_calendar</string>
 </resources>

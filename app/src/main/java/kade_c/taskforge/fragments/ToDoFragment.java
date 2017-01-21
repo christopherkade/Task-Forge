@@ -42,8 +42,6 @@ public class ToDoFragment extends Fragment {
 
     private String tabSelected;
 
-    private String email;
-
     private InternalFilesManager IFM;
 
     private ArrayList<String> input;
@@ -58,7 +56,6 @@ public class ToDoFragment extends Fragment {
         // Save name of the tab selected.
         if (!getArguments().isEmpty()) {
             tabSelected = getArguments().getString("name");
-            email = getArguments().getString("email");
         }
 
         refreshList();
@@ -408,18 +405,10 @@ public class ToDoFragment extends Fragment {
     public void refreshList() {
         ListView mListView = (ListView) view.findViewById(R.id.list);
         ArrayList<String> lines;
-        IFM = new InternalFilesManager(getContext(), getActivity(), tabSelected, email);
+        IFM = new InternalFilesManager(getContext(), getActivity(), tabSelected);
 
         // Get lines to display in current tab
         lines = IFM.readListFile();
-
-        // Remove two first lines
-        if (lines.size() > 0) {
-            if (lines.get(0).equals(email + "\n"))
-                lines.remove(0);
-            if (lines.get(0).equals(tabSelected + "\n"))
-                lines.remove(0);
-        }
 
         final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines, IFM, this);
         mListView.setAdapter(adapter);

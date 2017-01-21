@@ -29,51 +29,16 @@ public class InternalFilesManager {
     }
 
     /**
-     * Constructor to create our initial list files
-     */
-    public InternalFilesManager(Context ctx, Activity activity, String[] listNames, String useremail) {
-        context = ctx;
-        this.activity = activity;
-
-        createListFiles(listNames, useremail);
-    }
-
-    /**
      * Constructor to read and read to list files
      */
-    public InternalFilesManager(Context ctx, Activity activity, String filename, String useremail) {
+    public InternalFilesManager(Context ctx, Activity activity, String filename) {
         context = ctx;
         this.activity = activity;
         fileToOpen = filename;
 
         fileToOpen = fileToOpen.replace("\n", "");
-
-        //createListFiles();
-    }
-
-    /**
-     * Creates each list file
-     * General, Daily, Groceries etc.
-     */
-    private void createListFiles(String[] listNames, String email) {
-        try {
-            // Name of the file containing our deck list.
-            for (String file : listNames) {
-                File fileCheck = context.getFileStreamPath(file);
-
-                // If file has already been created, skip
-                if (fileCheck.exists()) continue;
-
-                FileOutputStream fos = activity.openFileOutput(file, Context.MODE_APPEND);
-                fos.write(email.getBytes());
-                fos.write('\n');
-                fos.write(file.getBytes());
-                fos.write('\n');
-                fos.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Handles Général to General list
+        fileToOpen = fileToOpen.replace("é", "e");
     }
 
     /**

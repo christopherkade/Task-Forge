@@ -34,42 +34,25 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     // Our File manager
     private InternalFilesManager IFM;
 
-    // Our Navigation Drawer.
+    // Our Navigation Drawer items
     public DrawerLayout drawer;
-
-    // Our toggler for the Navigation Drawer.
     private ActionBarDrawerToggle toggle;
-
     protected NavigationView navigationView;
-
-    private String email;
-
-    private ArrayList<String> tabs;
-
-    private boolean inputError;
-
     private Menu menu;
-
     private Toolbar toolbar;
-
-    private Prompt prompt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_taskforge);
 
-        email = getIntent().getStringExtra("email");
-
+        // Setup file manager
         IFM = new InternalFilesManager(this, this);
-
-        refreshTabs();
-
+        // Setup our navigation drawer
         setUpNavDrawer();
-
+        // Add existing tabs to the navigation drawer
+        refreshTabs();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
         setDrawerState(true);
     }
 
@@ -95,21 +78,12 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
-     * Shows or hides items in our Menu
-     */
-    public void displayMenu(boolean showMenu){
-        if (menu == null)
-            return;
-        menu.setGroupVisible(R.id.main_menu_group, showMenu);
-    }
-
-    /**
      * ActionBar click handler
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        prompt = new Prompt(this);
+        Prompt prompt = new Prompt(this);
 
         if (id == R.id.action_log_out) {
             prompt.signOut();
@@ -138,7 +112,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         item.setCheckable(true);
-        if (displaySelectedScreen(item.getItemId(), item.getTitle().toString())) {
+        if (displaySelectedScreen(item.getTitle().toString())) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             drawer.closeDrawer(GravityCompat.START);
@@ -146,6 +120,15 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
                 navigationView.getMenu().findItem(R.id.nav_general).setChecked(false);
         }
         return true;
+    }
+
+    /**
+     * Shows or hides items in our Menu
+     */
+    public void displayMenu(boolean showMenu){
+        if (menu == null)
+            return;
+        menu.setGroupVisible(R.id.main_menu_group, showMenu);
     }
 
     /**
@@ -167,36 +150,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         // Sets the 'General' tab as selected by default.
         navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
-        displaySelectedScreen(R.id.nav_general, getResources().getString(R.string.generalTab));
-    }
-
-    /**
-     * Starts the about Fragment
-     */
-    private void about() {
-        this.replaceFragment(new AboutFragment());
-    }
-
-    /**
-     * Starts the settings Fragment
-     */
-    private void settings() {
-        Notifications notifications = new Notifications(this);
-        notifications.notify("Title", "Content !");
-        getFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, new SettingsFragment())
-                .commit();
-    }
-
-    /**
-     * Calls authentication Activity and signs out.
-     */
-    public void signOut() {
-        Intent i = new Intent(getApplicationContext(), AuthenticationActivity.class);
-        Bundle b = new Bundle();
-        b.putBoolean("SignOut", true);
-        i.putExtras(b);
-        startActivity(i);
+        displaySelectedScreen(getResources().getString(R.string.generalTab));
     }
 
     /**
@@ -208,7 +162,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         Bundle bundle = new Bundle();
 
         bundle.putString("name", title);
-        bundle.putString("email", email);
 
         fragment = new ToDoFragment();
 
@@ -220,7 +173,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     /**
      * Checks the selected fragments state and launches it.
      */
-    private boolean displaySelectedScreen(int itemId, String title) {
+    private boolean displaySelectedScreen(String title) {
         Fragment fragment;
         fragment = prepareFragment(title);
 
@@ -295,7 +248,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
      */
     private void refreshTabs() {
         // Check if already displayed
-        tabs = IFM.readTabFile();
+        ArrayList<String> tabs = IFM.readTabFile();
 
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navView.getMenu();
@@ -305,37 +258,31 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             menuItem.setIcon(R.mipmap.ic_launcher);
         }
     }
-//
-//    /**
-//     * Sends a notification to the user
-//     */
-//    private void notification(String title, String content) {
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.mipmap.ic_launcher)
-//                        .setContentTitle(title)
-//                        .setContentText(content);
-//// Creates an explicit intent for an Activity in your app
-//        Intent resultIntent = new Intent(this, TaskForgeActivity.class);
-//
-//// The stack builder object will contain an artificial back stack for the
-//// started Activity.
-//// This ensures that navigating backward from the Activity leads out of
-//// your application to the Home screen.
-//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-//// Adds the back stack for the Intent (but not the Intent itself)
-//        stackBuilder.addParentStack(TaskForgeActivity.class);
-//// Adds the Intent that starts the Activity to the top of the stack
-//        stackBuilder.addNextIntent(resultIntent);
-//        PendingIntent resultPendingIntent =
-//                stackBuilder.getPendingIntent(
-//                        0,
-//                        PendingIntent.FLAG_UPDATE_CURRENT
-//                );
-//        mBuilder.setContentIntent(resultPendingIntent);
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//// mId allows you to update the notification later on.
-//        mNotificationManager.notify(1, mBuilder.build());
-//    }
+
+    /**
+     * Starts the about Fragment
+     */
+    private void about() {
+        this.replaceFragment(new AboutFragment());
+    }
+
+    /**
+     * Starts the settings Fragment
+     */
+    private void settings() {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, new SettingsFragment())
+                .commit();
+    }
+
+    /**
+     * Calls authentication Activity and signs out.
+     */
+    public void signOut() {
+        Intent i = new Intent(getApplicationContext(), AuthenticationActivity.class);
+        Bundle b = new Bundle();
+        b.putBoolean("SignOut", true);
+        i.putExtras(b);
+        startActivity(i);
+    }
 }

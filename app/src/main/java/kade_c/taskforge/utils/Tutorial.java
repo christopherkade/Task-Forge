@@ -26,26 +26,27 @@ public class Tutorial {
         launch();
     }
 
-
     /**
      * Launches the tutorial sequence, explaining the app to the user.
+     * Event creation -> List manipulation -> List creation
+     * -> List deletion -> List navigation
      */
     private void launch() {
         new TapTargetSequence(activity)
                 .targets(
                         TapTarget.forView(view.findViewById(R.id.fab), activity.getResources().getString(R.string.tutorial_fab_title),
                                 activity.getResources().getString(R.string.tutorial_fab_description))
-                                .outerCircleColor(R.color.red)      // Specify a color for the outer circle
-                                .targetCircleColor(R.color.grey_100)   // Specify a color for the target circle
-                                .titleTextSize(30)                  // Specify the size (in sp) of the title text
-                                .titleTextColor(R.color.grey_100)      // Specify the color of the title text
+                                .outerCircleColor(R.color.red)          // Specify a color for the outer circle
+                                .targetCircleColor(R.color.grey_100)    // Specify a color for the target circle
+                                .titleTextSize(30)                      // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.grey_100)       // Specify the color of the title text
                                 .textColor(R.color.grey_100)            // Specify a color for both the title and description text
-                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
-                                .drawShadow(true)                   // Whether to draw a drop shadow or not
-                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
-                                .tintTarget(true)                   // Whether to tint the target view's color
-                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
-                                .targetRadius(60),                  // Specify the target radius (in dp)
+                                .textTypeface(Typeface.SANS_SERIF)      // Specify a typeface for the text
+                                .drawShadow(true)                       // Whether to draw a drop shadow or not
+                                .cancelable(true)                       // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(true)                       // Whether to tint the target view's color
+                                .transparentTarget(false)               // Specify whether the target is transparent (displays the content underneath)
+                                .targetRadius(60),                      // Specify the target radius (in dp)
                         TapTarget.forView(view.findViewById(R.id.list), activity.getResources().getString(R.string.tutorial_list_title), activity.getResources().getString(R.string.tutorial_list_description))
                                 .outerCircleColor(R.color.red)
                                 .targetCircleColor(R.color.grey_100)
@@ -85,6 +86,5 @@ public class Tutorial {
                         TapTarget.forToolbarNavigationIcon(toolbar, activity.getResources().getString(R.string.tutorial_list_navigation_title), activity.getResources().getString(R.string.tutorial_list_navigation_description))
                                 .textColor(R.color.grey_100))
                 .start();
-
     }
 }

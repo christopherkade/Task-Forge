@@ -2,7 +2,10 @@ package kade_c.taskforge.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -13,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,9 +28,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import kade_c.taskforge.R;
+import kade_c.taskforge.fragments.SettingsFragment;
 
 /**
- * Handles user authentication with Firebase.
+ * Our main activity that handles user authentication with Firebase.
  */
 public class AuthenticationActivity extends AppCompatActivity implements
         View.OnClickListener {
@@ -40,14 +45,16 @@ public class AuthenticationActivity extends AppCompatActivity implements
     // Auth State Listener
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    // Users email and password
     private static String email;
     private static String password;
-    private static String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+
+        setLanguage();
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
@@ -76,19 +83,33 @@ public class AuthenticationActivity extends AppCompatActivity implements
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
                 // User is signed in
-                if (user != null) {
-                    String userName = user.getDisplayName();
-                    if (userName == null) {
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(name)
-                                .build();
-
-                        user.updateProfile(profileUpdates);
-                    }
-                }
                 updateUI(user, false);
             }
         };
+    }
+
+    /**
+     * One app launch, set app to the one defined in the preferences.
+     */
+    private void setLanguage() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Locale locale = null;
+
+        String language = sharedPref.getString(SettingsFragment.KEY_PREF_LANGUAGE, "English");
+
+        switch (language) {
+            case "English":
+                locale = new Locale("en");
+                break;
+            case "French":
+                locale = new Locale("fr");
+                break;
+        }
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getApplicationContext().getResources().updateConfiguration(config, null);
+
     }
 
     @Override

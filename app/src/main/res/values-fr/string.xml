@@ -79,4 +79,7 @@
     <string name="tutorial_list_deletion_description">Vous pouvez supprimer une liste en cliquant ici</string>
     <string name="tutorial_list_navigation_title">Navigation</string>
     <string name="tutorial_list_navigation_description">Vous pouvez naviguer à travers vos listes en cliquant ici</string>
+
+    <string name="dialog_the">Le</string>
+    <string name="dialog_at">A</string>
 </resources>
