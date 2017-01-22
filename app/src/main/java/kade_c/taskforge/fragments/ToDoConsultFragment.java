@@ -18,10 +18,6 @@ import kade_c.taskforge.activities.TaskForgeActivity;
 public class ToDoConsultFragment extends Fragment {
 
     private View view;
-    private String title;
-    private String content;
-    private String date;
-    private String time;
 
     @Nullable
     @Override
@@ -30,16 +26,9 @@ public class ToDoConsultFragment extends Fragment {
 
         ((TaskForgeActivity)getActivity()).setDrawerState(false);
         ((TaskForgeActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Hide useless menu items
         ((TaskForgeActivity)getActivity()).displayMenu(false);
 
-        title = getArguments().getString("title");
-        content = getArguments().getString("content");
-        date = getArguments().getString("date");
-        time = getArguments().getString("time");
-
-        setConsultDetails();
+        setDetails();
 
         return view;
     }
@@ -53,12 +42,19 @@ public class ToDoConsultFragment extends Fragment {
     /**
      * Displays consulted item's details
      */
-    private void setConsultDetails() {
+    private void setDetails() {
         TextView titleTv = (TextView) view.findViewById(R.id.consult_title);
         TextView dateTv = (TextView) view.findViewById(R.id.consult_date);
         TextView timeTv = (TextView) view.findViewById(R.id.consult_time);
         TextView contentTv = (TextView) view.findViewById(R.id.consult_content);
 
+        // Get information to display
+        String title = getArguments().getString("title");
+        String content = getArguments().getString("content");
+        String date = getArguments().getString("date");
+        String time = getArguments().getString("time");
+
+        // Sets it
         titleTv.setText(title);
         dateTv.setText(getResources().getString(R.string.dialog_the) + " " + date);
         timeTv.setText(getResources().getString(R.string.dialog_at) + " " + time);

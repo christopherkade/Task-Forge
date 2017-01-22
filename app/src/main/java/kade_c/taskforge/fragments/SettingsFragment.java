@@ -30,9 +30,28 @@ public class SettingsFragment extends PreferenceFragment {
 
         ((TaskForgeActivity) getActivity()).setDrawerState(false);
         ((TaskForgeActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         ((TaskForgeActivity)getActivity()).displayMenu(false);
 
+        handleLanguage();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getActivity().setTitle(getResources().getString(R.string.settings_title));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setBackgroundColor(Color.WHITE);
+    }
+
+    /**
+     * Handles the language setting
+     * Reloads UI on change with the appropriate language
+     */
+    private void handleLanguage() {
         final ListPreference listPreference = (ListPreference) findPreference("pref_language");
         String currentValue = listPreference.getValue();
         listPreference.setSummary(currentValue);
@@ -62,17 +81,5 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle(getResources().getString(R.string.settings_title));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getView().setBackgroundColor(Color.WHITE);
     }
 }

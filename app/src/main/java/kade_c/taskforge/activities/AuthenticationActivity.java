@@ -34,6 +34,8 @@ import kade_c.taskforge.fragments.SettingsFragment;
  */
 public class AuthenticationActivity extends AppCompatActivity implements
         View.OnClickListener {
+
+    // Views
     private TextView mStatusTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
@@ -53,6 +55,7 @@ public class AuthenticationActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
+        // On app launch, sets the right language
         setLanguage();
 
         // Views
@@ -82,7 +85,7 @@ public class AuthenticationActivity extends AppCompatActivity implements
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
                 // User is signed in
-                updateUI(user, false);
+                updateUI(user);
             }
         };
     }
@@ -191,7 +194,8 @@ public class AuthenticationActivity extends AppCompatActivity implements
      */
     private void signOut() {
         mAuth.signOut();
-        updateUI(null, false);
+
+        updateUI(null);
     }
 
     /**
@@ -202,14 +206,14 @@ public class AuthenticationActivity extends AppCompatActivity implements
         boolean valid = true;
 
         if (TextUtils.isEmpty(email) || !ptr.matcher(email).matches()) {
-            mEmailField.setError("Required.");
+            mEmailField.setError("Required");
             valid = false;
         } else {
             mEmailField.setError(null);
         }
 
         if (TextUtils.isEmpty(password) || password.length() < 6) {
-            mPasswordField.setError("Required.");
+            mPasswordField.setError("Required");
             valid = false;
         } else {
             mPasswordField.setError(null);
@@ -218,27 +222,15 @@ public class AuthenticationActivity extends AppCompatActivity implements
         return valid;
     }
 
-    private void updateUI(FirebaseUser user, boolean reset) {
+    /**
+     * Updates the UI
+     * @param user
+     */
+    private void updateUI(FirebaseUser user) {
         hideProgressDialog();
 
         // DEFAULT UI
-        if (reset) {
-            mStatusTextView.setText(R.string.signed_out);
-
-            EditText emailText = (EditText)findViewById(R.id.field_email);
-            emailText.setText("");
-            emailText.setHint("");
-
-            Button createAccountButton = (Button)findViewById(R.id.email_create_account_button);
-            createAccountButton.setText(R.string.create_account);
-
-            Button signInButton = (Button)findViewById(R.id.email_sign_in_button);
-            signInButton.setText(R.string.sign_in);
-
-            findViewById(R.id.email_create_account_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.email_sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.field_password).setVisibility(View.VISIBLE);
-        } else if (user != null) {
+        if (user != null) {
             startTaskForge();
         } else {
             mStatusTextView.setText(R.string.signed_out);
@@ -248,48 +240,27 @@ public class AuthenticationActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Called when user presses back arrow.
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                updateUI(null, true);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     public void onClick(View v) {
         int i = v.getId();
 
+        // Get inputted email and passowrd
+        email = mEmailField.getText().toString();
+        password = mPasswordField.getText().toString();
+
+        // Check their validity
+        if (!validateForm()) {
+            return;
+        }
+
         // Create account button
         if (i == R.id.email_create_account_button) {
-            email = mEmailField.getText().toString();
-            password = mPasswordField.getText().toString();
-
-            if (!validateForm()) {
-                return;
-            }
             createAccount(email, password);
         }
 
         // Sign in button
         if (i == R.id.email_sign_in_button) {
-            email = mEmailField.getText().toString();
-            password = mPasswordField.getText().toString();
-
-            if (!validateForm()) {
-                return;
-            }
-
-            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            signIn(email, password);
         }
     }
 
@@ -310,5 +281,4 @@ public class AuthenticationActivity extends AppCompatActivity implements
             mProgressDialog.dismiss();
         }
     }
-
 }

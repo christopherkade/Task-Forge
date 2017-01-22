@@ -23,7 +23,6 @@ import kade_c.taskforge.fragments.AboutFragment;
 import kade_c.taskforge.fragments.SettingsFragment;
 import kade_c.taskforge.fragments.ToDoFragment;
 import kade_c.taskforge.utils.InternalFilesManager;
-import kade_c.taskforge.utils.Notifications;
 import kade_c.taskforge.utils.Prompt;
 
 /**
@@ -46,14 +45,16 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_taskforge);
 
-        // Setup file manager
-        IFM = new InternalFilesManager(this, this);
         // Setup our navigation drawer
         setUpNavDrawer();
-        // Add existing tabs to the navigation drawer
-        refreshTabs();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setDrawerState(true);
+
+        // Setup file manager
+        IFM = new InternalFilesManager(this, this);
+
+        // Add existing tabs to the navigation drawer
+        refreshTabs();
     }
 
     /**
@@ -83,42 +84,31 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Prompt prompt = new Prompt(this);
+        Prompt prompt = new Prompt(this, null, "");
 
         if (id == R.id.action_log_out) {
             prompt.signOut();
-            return true;
         } else if (id == R.id.action_add_list) {
             prompt.addList();
-            return true;
         } else if (id == R.id.action_delete_list) {
             prompt.listDeletion();
-            return true;
         } else if (id == R.id.action_settings) {
-            settings();
-            return true;
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, new SettingsFragment()).commit();
         } else if (id == R.id.action_tutorial) {
             new Tutorial(getWindow().getDecorView().getRootView(), this, toolbar);
-            return true;
         } else if (id == R.id.action_about) {
-            about();
-            return true;
+            this.replaceFragment(new AboutFragment(), false);
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         item.setCheckable(true);
-        if (displaySelectedScreen(item.getTitle().toString())) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            drawer.closeDrawer(GravityCompat.START);
-            if (item.getItemId() != R.id.nav_general)
-                navigationView.getMenu().findItem(R.id.nav_general).setChecked(false);
-        }
+        displaySelectedScreen(item.getTitle().toString());
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -154,10 +144,10 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
-     * Checks which item has been selected and instantiates the corresponding Fragment.
+     * Instantiates the ToDoFragment and sets its name as parameter
      * @return the fragment to be displayed.
      */
-    private Fragment prepareFragment(String title) {
+    private Fragment getFragment(String title) {
         Fragment fragment;
         Bundle bundle = new Bundle();
 
@@ -173,29 +163,26 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     /**
      * Checks the selected fragments state and launches it.
      */
-    private boolean displaySelectedScreen(String title) {
-        Fragment fragment;
-        fragment = prepareFragment(title);
-
-        this.replaceFragment(fragment);
-
-        return false;
+    private void displaySelectedScreen(String title) {
+        Fragment fragment = getFragment(title);
+        this.replaceFragment(fragment, true);
     }
 
     /**
      * Replaces the current fragment and closes the Drawer.
      * @param fragment fragment used for replacement
      */
-    public void replaceFragment(final Fragment fragment) {
+    public void replaceFragment(final Fragment fragment, boolean drawerOpen) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName())
                 .commit();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        // Close our Drawer since we have selected a valid item.
-        drawer.closeDrawer(GravityCompat.START);
+        // If our drawer is open, close it
+        if (drawerOpen) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+        }
     }
 
     /**
@@ -223,9 +210,8 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
     /**
      * Adds tab given as parameter to Navigation Drawer
-     * @param tabName
+     * @param tabName tab to be written in our tab file
      */
-    // Read tab file and display them
     public void addNewTab(String tabName) {
         InternalFilesManager IFM = new InternalFilesManager(this, this);
 
@@ -257,22 +243,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             MenuItem menuItem = menu.add(tab);
             menuItem.setIcon(R.mipmap.ic_launcher);
         }
-    }
-
-    /**
-     * Starts the about Fragment
-     */
-    private void about() {
-        this.replaceFragment(new AboutFragment());
-    }
-
-    /**
-     * Starts the settings Fragment
-     */
-    private void settings() {
-        getFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, new SettingsFragment())
-                .commit();
     }
 
     /**

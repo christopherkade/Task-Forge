@@ -63,6 +63,12 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
         TextView contentTextView = (TextView) rowView.findViewById(R.id.content);
         contentTextView.setText(content);
 
+        handleCheckBox(rowView, checked, position);
+
+        return rowView;
+    }
+
+    private void handleCheckBox(View rowView, String checked, final int position) {
         final CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
 
         /**
@@ -72,7 +78,6 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
 
             /**
              * User clicks on checkbox, change state in file
-             * @param arg0
              */
             @Override
             public void onClick(View arg0) {
@@ -99,7 +104,5 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
         } else {
             checkBox.setChecked(false);
         }
-
-        return rowView;
     }
 }
