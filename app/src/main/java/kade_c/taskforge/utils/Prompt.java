@@ -3,7 +3,9 @@ package kade_c.taskforge.utils;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -19,12 +21,16 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import kade_c.taskforge.R;
 import kade_c.taskforge.activities.TaskForgeActivity;
+import kade_c.taskforge.fragments.SettingsFragment;
 import kade_c.taskforge.fragments.ToDoFragment;
 
 /**
@@ -353,9 +359,13 @@ public class Prompt {
                             public void onClick(DialogInterface dialog, int id) {
                                 inputError = checkInput(titleInput, dateSelected);
                                 if (!inputError) {
-                                    input.add(titleInput.getText().toString());
-                                    input.add(contentInput.getText().toString());
-                                    input.add(dateSelected.getText().toString());
+                                    String title = titleInput.getText().toString();
+                                    String content = contentInput.getText().toString();
+                                    String date = dateSelected.getText().toString();
+
+                                    input.add(title);
+                                    input.add(content);
+                                    input.add(date);
 
                                     int currentApiVersion = android.os.Build.VERSION.SDK_INT;
                                     String time;
@@ -368,6 +378,7 @@ public class Prompt {
                                     input.add(time);
 
                                     if (type.equals("create")) {
+                                        setNotification(title, content, date, time);
                                         IFM.writeListFile(input.get(0), input.get(1), input.get(2), input.get(3));
                                     } else if (type.equals("edit")) {
                                         IFM.replaceItem(position, input.get(0), input.get(1), input.get(2), input.get(3));
@@ -425,5 +436,27 @@ public class Prompt {
         }
 
         return wrong;
+    }
+
+    /**
+     * Sets a notification to be displayed at the given time and date.
+     */
+    private void setNotification(String title, String content, String date, String time) {
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
+
+            boolean allowNotifictions = sharedPref.getBoolean(SettingsFragment.KEY_PREF_NOTIFICATIONS, true);
+
+            if (allowNotifictions) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.FRANCE);
+                Date fullDate = sdf.parse(date + " " + time);
+
+                long ms = fullDate.getTime() - System.currentTimeMillis();
+
+                ((TaskForgeActivity) activity).scheduleNotification(((TaskForgeActivity) activity).getNotification(title, content), ms);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

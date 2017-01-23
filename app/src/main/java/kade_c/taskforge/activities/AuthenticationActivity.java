@@ -118,8 +118,17 @@ public class AuthenticationActivity extends AppCompatActivity implements
             case "English":
                 locale = new Locale("en");
                 break;
+            case "Anglais":
+                locale = new Locale("en");
+                break;
             case "French":
                 locale = new Locale("fr");
+                break;
+            case "Français":
+                locale = new Locale("fr");
+                break;
+            default:
+                locale = new Locale("en");
                 break;
         }
         Locale.setDefault(locale);

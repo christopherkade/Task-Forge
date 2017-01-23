@@ -33,7 +33,9 @@
     <string name="settings_title">Settings</string>
     <string name="settings_delete_on_check">Delete item on checked</string>
     <string name="settings_move_item_on_check">Move completed tasks to end</string>
+    <string name="settings_notifications">Allow notifications</string>
     <string name="settings_language">Language</string>
+    <string name="settings_default_not_time">Notify me before an event (hours)</string>
 
     <string name="action_add_list">Add list</string>
 
@@ -81,4 +83,9 @@
     <string name="dialog_the">The</string>
     <string name="dialog_at">At</string>
     <string name="content_desc_calendar">date_selection_calendar</string>
+
+    <string-array name="array_languages">
+        <item>English</item>
+        <item>French</item>
+    </string-array>
 </resources>

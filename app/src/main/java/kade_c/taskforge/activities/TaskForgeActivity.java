@@ -1,7 +1,13 @@
 package kade_c.taskforge.activities;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -17,7 +23,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import io.fabric.sdk.android.services.concurrency.Task;
 import kade_c.taskforge.R;
+import kade_c.taskforge.utils.Notifications;
 import kade_c.taskforge.utils.Tutorial;
 import kade_c.taskforge.fragments.AboutFragment;
 import kade_c.taskforge.fragments.SettingsFragment;
@@ -254,5 +262,43 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         b.putBoolean("SignOut", true);
         i.putExtras(b);
         startActivity(i);
+    }
+
+    /**
+     * Schedules a notification at the given delay
+     */
+    public void scheduleNotification(Notification notification, long delay) {
+        Intent notificationIntent = new Intent(this, Notifications.class);
+        notificationIntent.putExtra(Notifications.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(Notifications.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    /**
+     * Builds a notification with the given title and content
+     */
+    // TODO: Handle back button bug after notification opened
+    public Notification getNotification(String title, String content) {
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentTitle(title);
+        builder.setContentText(content);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        Intent resultIntent = new Intent(this, TaskForgeActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(TaskForgeActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        builder.setContentIntent(resultPendingIntent);
+        builder.setAutoCancel(true);
+
+        return builder.build();
     }
 }

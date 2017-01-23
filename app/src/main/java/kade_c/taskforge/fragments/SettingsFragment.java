@@ -22,6 +22,7 @@ public class SettingsFragment extends PreferenceFragment {
     public static final String KEY_PREF_DEL_ON_CHECK = "pref_delOnCheck";
     public static final String KEY_PREF_MOVE_ON_CHECK = "pref_moveOnCheck";
     public static final String KEY_PREF_LANGUAGE = "pref_language";
+    public static final String KEY_PREF_NOTIFICATIONS = "pref_notifications";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,9 @@ public class SettingsFragment extends PreferenceFragment {
      * Handles the language setting
      * Reloads UI on change with the appropriate language
      */
+    // TODO: Change ListPreference summary language on language change
     private void handleLanguage() {
-        final ListPreference listPreference = (ListPreference) findPreference("pref_language");
+        final ListPreference listPreference = (ListPreference) findPreference(KEY_PREF_LANGUAGE);
         String currentValue = listPreference.getValue();
         listPreference.setSummary(currentValue);
 
@@ -64,7 +66,7 @@ public class SettingsFragment extends PreferenceFragment {
 
                 // Change language
                 Locale locale;
-                if (selectedLanguage.equals("French")) {
+                if (selectedLanguage.equals("French") || selectedLanguage.equals("Français")) {
                     locale = new Locale("fr");
                 } else {
                     locale = new Locale("en");
@@ -78,6 +80,7 @@ public class SettingsFragment extends PreferenceFragment {
                 getFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, new SettingsFragment())
                         .commit();
+
                 return true;
             }
         });

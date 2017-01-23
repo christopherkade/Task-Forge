@@ -12,6 +12,11 @@
         android:title="@string/settings_move_item_on_check"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="pref_notifications"
+        android:title="@string/settings_notifications"
+        android:defaultValue="true" />
+
     <ListPreference
         android:key="pref_language"
         android:title="@string/settings_language"
