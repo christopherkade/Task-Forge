@@ -2,6 +2,7 @@ package kade_c.taskforge.utils;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,18 +40,16 @@ import kade_c.taskforge.fragments.ToDoFragment;
  * List creation, deletion
  * Signing out
  * Event creation, edition
- *
  */
-public class Prompt {
+public class DialogHandler {
 
     private Activity activity;
     private Fragment fragment;
-    private ArrayList<String> tabs;
     private InternalFilesManager IFM;
     private boolean inputError;
     private ArrayList<String> input;
 
-    public Prompt(Activity activity, Fragment fragment, String tabSelected) {
+    public DialogHandler(Activity activity, Fragment fragment, String tabSelected) {
         this.activity = activity;
         this.fragment = fragment;
         input = new ArrayList<>();
@@ -58,10 +58,11 @@ public class Prompt {
     }
 
     /**
-     * Displays a list of current available tabs to be deleted
+     * Dialog containing tabs available for deletion
+     * Clicking one will delete it
      */
     public void listDeletion() {
-        tabs = IFM.readTabFile();
+        ArrayList<String> tabs = IFM.readTabFile();
 
         // Check if there are lists to delete
         if (tabs.size() == 0) {
@@ -111,16 +112,20 @@ public class Prompt {
                 activity.startActivity(activity.getIntent());
             }
         });
+
+        final AlertDialog alertDialog = builderSingle.create();
+
+        setDialogCancel(alertDialog);
         builderSingle.show();
     }
 
     /**
-     * Prompts user before sign out.
+     * Prompts user before sign out
      */
     public void signOut() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(activity);
-        alert.setTitle(activity.getResources().getString(R.string.action_log_out) + "?");
-        alert.setNegativeButton(activity.getResources().getString(R.string.button_no), new DialogInterface.OnClickListener() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+        dialogBuilder.setTitle(activity.getResources().getString(R.string.action_log_out) + "?");
+        dialogBuilder.setNegativeButton(activity.getResources().getString(R.string.button_no), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -128,7 +133,7 @@ public class Prompt {
             }
         });
 
-        alert.setPositiveButton(activity.getResources().getString(R.string.button_yes), new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton(activity.getResources().getString(R.string.button_yes), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -139,7 +144,10 @@ public class Prompt {
             }
         });
 
-        alert.show();
+        final AlertDialog alertDialog = dialogBuilder.create();
+
+        setDialogCancel(alertDialog);
+        dialogBuilder.show();
     }
 
     /**
@@ -214,6 +222,8 @@ public class Prompt {
                 }
             }
         });
+
+        setDialogCancel(alertDialog);
     }
 
     public void createTODO() {
@@ -412,6 +422,24 @@ public class Prompt {
                 if (inputError) {
                     alertDialog.show();
                 }
+            }
+        });
+
+        setDialogCancel(alertDialog);
+    }
+
+    /**
+     * Makes back arrow close the dialog
+     */
+    private void setDialogCancel(final AlertDialog alertDialog) {
+        alertDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    alertDialog.dismiss();
+                }
+                return true;
             }
         });
     }

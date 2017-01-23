@@ -14,10 +14,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
+
+import kade_c.taskforge.utils.DialogHandler;
 import kade_c.taskforge.utils.InternalFilesManager;
 import kade_c.taskforge.R;
 import kade_c.taskforge.activities.TaskForgeActivity;
-import kade_c.taskforge.utils.Prompt;
 import kade_c.taskforge.utils.ToDoArrayAdapter;
 
 /**
@@ -76,7 +77,7 @@ public class ToDoFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.edit:
-                new Prompt(getActivity(), ToDoFragment.this, tabSelected).editTODO(index);
+                new DialogHandler(getActivity(), ToDoFragment.this, tabSelected).editTODO(index);
                 return true;
             case R.id.delete:
                 deleteTODO(index);
@@ -95,7 +96,7 @@ public class ToDoFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-                new Prompt(getActivity(), ToDoFragment.this, tabSelected).createTODO();
+                new DialogHandler(getActivity(), ToDoFragment.this, tabSelected).createTODO();
             }
         });
     }

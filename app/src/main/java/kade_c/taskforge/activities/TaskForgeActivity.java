@@ -23,15 +23,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import io.fabric.sdk.android.services.concurrency.Task;
 import kade_c.taskforge.R;
+import kade_c.taskforge.utils.DialogHandler;
 import kade_c.taskforge.utils.Notifications;
 import kade_c.taskforge.utils.Tutorial;
 import kade_c.taskforge.fragments.AboutFragment;
 import kade_c.taskforge.fragments.SettingsFragment;
 import kade_c.taskforge.fragments.ToDoFragment;
 import kade_c.taskforge.utils.InternalFilesManager;
-import kade_c.taskforge.utils.Prompt;
 
 /**
  * Activity that handles the display of List Fragments
@@ -53,16 +52,17 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_taskforge);
 
-        // Setup our navigation drawer
-        setUpNavDrawer();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        setDrawerState(true);
-
         // Setup file manager
         IFM = new InternalFilesManager(this, this);
 
         // Add existing tabs to the navigation drawer
         refreshTabs();
+
+        // Setup our navigation drawer
+        setUpNavDrawer();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        setDrawerState(true);
+
     }
 
     /**
@@ -92,7 +92,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Prompt prompt = new Prompt(this, null, "");
+        DialogHandler prompt = new DialogHandler(this, null, "");
 
         if (id == R.id.action_log_out) {
             prompt.signOut();
@@ -281,7 +281,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     /**
      * Builds a notification with the given title and content
      */
-    // TODO: Handle back button bug after notification opened
+    // TODO: Handle back button bug after notification opening
     public Notification getNotification(String title, String content) {
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentTitle(title);

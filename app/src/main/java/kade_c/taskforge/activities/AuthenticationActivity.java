@@ -9,9 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -110,7 +108,7 @@ public class AuthenticationActivity extends AppCompatActivity implements
      */
     private void setLanguage() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        Locale locale = null;
+        Locale locale;
 
         String language = sharedPref.getString(SettingsFragment.KEY_PREF_LANGUAGE, "English");
 
@@ -118,13 +116,7 @@ public class AuthenticationActivity extends AppCompatActivity implements
             case "English":
                 locale = new Locale("en");
                 break;
-            case "Anglais":
-                locale = new Locale("en");
-                break;
             case "French":
-                locale = new Locale("fr");
-                break;
-            case "Français":
                 locale = new Locale("fr");
                 break;
             default:

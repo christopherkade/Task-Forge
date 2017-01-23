@@ -52,7 +52,6 @@ public class SettingsFragment extends PreferenceFragment {
      * Handles the language setting
      * Reloads UI on change with the appropriate language
      */
-    // TODO: Change ListPreference summary language on language change
     private void handleLanguage() {
         final ListPreference listPreference = (ListPreference) findPreference(KEY_PREF_LANGUAGE);
         String currentValue = listPreference.getValue();

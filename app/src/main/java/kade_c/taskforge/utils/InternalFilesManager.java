@@ -119,18 +119,13 @@ public class InternalFilesManager {
     public void writeListFile(String title, String content, String date, String time) {
         try {
             FileOutputStream fos = activity.openFileOutput(fileToOpen, Context.MODE_APPEND);
+            String toWrite = title + " | " +
+                    content + " | " +
+                    date + " | " +
+                    time + " | " +
+                    "false\n";
 
-            // Sets title, content, date and if checked
-            fos.write(title.getBytes());
-            fos.write(" | ".getBytes());
-            fos.write(content.getBytes());
-            fos.write(" | ".getBytes());
-            fos.write(date.getBytes());
-            fos.write(" | ".getBytes());
-            fos.write(time.getBytes());
-            fos.write(" | ".getBytes());
-            fos.write("false".getBytes());
-            fos.write('\n');
+            fos.write(toWrite.getBytes());
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
