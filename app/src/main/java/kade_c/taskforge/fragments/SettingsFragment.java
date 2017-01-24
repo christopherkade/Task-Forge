@@ -30,9 +30,10 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
 
         ((TaskForgeActivity) getActivity()).setDrawerState(false);
-        ((TaskForgeActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        ((TaskForgeActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((TaskForgeActivity)getActivity()).displayMenu(false);
 
+//        ((TaskForgeActivity)getActivity()).setCurrentMenuDisplay("Settings");
         handleLanguage();
     }
 

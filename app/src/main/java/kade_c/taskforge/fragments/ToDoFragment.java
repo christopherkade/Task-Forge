@@ -45,6 +45,8 @@ public class ToDoFragment extends Fragment {
         handleListViewClick();
         handleFAB();
 
+        ((TaskForgeActivity)getActivity()).setPreviousTabName(tabSelected);
+
         return view;
     }
 

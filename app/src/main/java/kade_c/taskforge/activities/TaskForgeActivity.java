@@ -6,8 +6,10 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -47,6 +49,13 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     private Menu menu;
     private Toolbar toolbar;
 
+    String fname = "";
+
+    String tabName;
+    String previousTabName;
+
+    Fragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +72,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setDrawerState(true);
 
+//        setCurrentMenuDisplay("");
     }
 
     /**
@@ -73,6 +83,19 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (fname.equals("SettingsFragment")) {
+            Intent i = new Intent(getApplicationContext(), TaskForgeActivity.class);
+            Bundle b = new Bundle();
+            b.putString("previousTab", previousTabName);
+            i.putExtras(b);
+            startActivity(i);
+        } else if (!fname.equals("ToDoFragment"))  { // !fname.equals("SettingsFragment")
+            fname = "ToDoFragment";
+//            if (getFragmentManager().getBackStackEntryCount() > 0)
+//                getFragmentManager().popBackStackImmediate();
+            setDrawerState(true);
+            displayMenu(true);
+            super.onBackPressed();
         }
     }
 
@@ -101,8 +124,11 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         } else if (id == R.id.action_delete_list) {
             prompt.listDeletion();
         } else if (id == R.id.action_settings) {
+            fname = "SettingsFragment";
             getFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, new SettingsFragment()).commit();
+                    .replace(R.id.content_frame, new SettingsFragment())
+                    .addToBackStack("SettingsFragment")
+                    .commit();
         } else if (id == R.id.action_tutorial) {
             new Tutorial(getWindow().getDecorView().getRootView(), this, toolbar);
         } else if (id == R.id.action_about) {
@@ -115,7 +141,8 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         item.setCheckable(true);
-        displaySelectedScreen(item.getTitle().toString());
+//        previousTabName = item.getTitle().toString().replace("\n", "");
+        displaySelectedScreen(item.getTitle().toString().replace("\n", ""));
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -146,9 +173,23 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Sets the 'General' tab as selected by default.
-        navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
-        displaySelectedScreen(getResources().getString(R.string.generalTab));
+        String currentListDisplay;
+
+        // If we must go back to a previously selected page, do so here.
+        String lastPage = getIntent().getStringExtra("previousTab");
+        if (lastPage != null) {
+            //TODO: Set right item checked
+            displaySelectedScreen(lastPage);
+
+        } else {
+            if (getCurrentLanguage().equals("English"))
+                currentListDisplay = "General";
+            else
+                currentListDisplay = "Général";
+//            previousTabName = currentListDisplay;
+            navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
+            displaySelectedScreen(currentListDisplay);
+        }
     }
 
     /**
@@ -156,7 +197,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
      * @return the fragment to be displayed.
      */
     private Fragment getFragment(String title) {
-        Fragment fragment;
         Bundle bundle = new Bundle();
 
         bundle.putString("name", title);
@@ -178,12 +218,14 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
     /**
      * Replaces the current fragment and closes the Drawer.
-     * @param fragment fragment used for replacement
+     * @param fragmentR fragment used for replacement
      */
-    public void replaceFragment(final Fragment fragment, boolean drawerOpen) {
+    public void replaceFragment(final Fragment fragmentR, boolean drawerOpen) {
+        fname = fragmentR.getClass().getSimpleName();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName())
+                .replace(R.id.content_frame, fragmentR, fragmentR.getClass().getSimpleName())
+                .addToBackStack(fname)
                 .commit();
 
         // If our drawer is open, close it
@@ -287,18 +329,40 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setSmallIcon(R.mipmap.ic_launcher);
+
         Intent resultIntent = new Intent(this, TaskForgeActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(TaskForgeActivity.class);
         stackBuilder.addNextIntent(resultIntent);
+
         PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
         builder.setContentIntent(resultPendingIntent);
         builder.setAutoCancel(true);
 
         return builder.build();
     }
+
+    private String getCurrentLanguage() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String language = sharedPref.getString(SettingsFragment.KEY_PREF_LANGUAGE, "English");
+        return language;
+    }
+
+//    public void setCurrentListDisplay(String currentListDisplay) {
+//        this.currentListDisplay = currentListDisplay;
+//    }
+//
+//    public void setCurrentMenuDisplay(String currentMenuDisplay) {
+//        this.currentMenuDisplay = currentMenuDisplay;
+//    }
+
+    public void setPreviousTabName(String previousTabName) {
+        this.previousTabName = previousTabName;
+    }
+
 }
