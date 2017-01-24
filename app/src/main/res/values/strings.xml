@@ -36,6 +36,7 @@
     <string name="settings_notifications">Allow notifications</string>
     <string name="settings_language">Language</string>
     <string name="settings_default_not_time">Notify me before an event (hours)</string>
+    <string name="settings_language_set">Language: English</string>
 
     <string name="action_add_list">Add list</string>
 
