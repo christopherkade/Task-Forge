@@ -27,7 +27,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.TaskForgeActivity" />
+        <activity android:name=".activities.TaskForgeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+
         <receiver android:name=".utils.Notifications" />
     </application>
 
