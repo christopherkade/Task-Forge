@@ -49,12 +49,9 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     private Menu menu;
     private Toolbar toolbar;
 
-    String fname = "";
-
-    String tabName;
-    String previousTabName;
-
-    Fragment fragment;
+    private String fname = "";
+    private String previousTabName;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +68,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         setUpNavDrawer();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setDrawerState(true);
-
-//        setCurrentMenuDisplay("");
     }
 
     /**
@@ -89,10 +84,8 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             b.putString("previousTab", previousTabName);
             i.putExtras(b);
             startActivity(i);
-        } else if (!fname.equals("ToDoFragment"))  { // !fname.equals("SettingsFragment")
+        } else if (!fname.equals("ToDoFragment"))  {
             fname = "ToDoFragment";
-//            if (getFragmentManager().getBackStackEntryCount() > 0)
-//                getFragmentManager().popBackStackImmediate();
             setDrawerState(true);
             displayMenu(true);
             super.onBackPressed();
@@ -141,7 +134,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         item.setCheckable(true);
-//        previousTabName = item.getTitle().toString().replace("\n", "");
         displaySelectedScreen(item.getTitle().toString().replace("\n", ""));
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -178,15 +170,13 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         // If we must go back to a previously selected page, do so here.
         String lastPage = getIntent().getStringExtra("previousTab");
         if (lastPage != null) {
-            //TODO: Set right item checked
             displaySelectedScreen(lastPage);
-
+            setSelectedList(lastPage);
         } else {
             if (getCurrentLanguage().equals("English"))
                 currentListDisplay = "General";
             else
                 currentListDisplay = "Général";
-//            previousTabName = currentListDisplay;
             navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
             displaySelectedScreen(currentListDisplay);
         }
@@ -353,16 +343,29 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         return language;
     }
 
-//    public void setCurrentListDisplay(String currentListDisplay) {
-//        this.currentListDisplay = currentListDisplay;
-//    }
-//
-//    public void setCurrentMenuDisplay(String currentMenuDisplay) {
-//        this.currentMenuDisplay = currentMenuDisplay;
-//    }
-
     public void setPreviousTabName(String previousTabName) {
         this.previousTabName = previousTabName;
     }
 
+    /**
+     * Sets the right item to be checked in our Navigation Drawer menu
+     * @param listName
+     */
+    private void setSelectedList(String listName) {
+        ArrayList<String> tabs = IFM.readTabFile();
+        int i = 0;
+        boolean checked = false;
+
+        for (String tab : tabs) {
+            i++;
+            if (listName.equals(tab.replace("\n", ""))) {
+                navigationView.getMenu().getItem(i).setCheckable(true);
+                navigationView.getMenu().getItem(i).setChecked(true);
+                checked = true;
+            }
+        }
+        if (!checked) {
+            navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
+        }
+    }
 }

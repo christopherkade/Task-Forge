@@ -86,4 +86,7 @@
 
     <string name="dialog_the">Le</string>
     <string name="dialog_at">A</string>
+
+    <string name="edit">Editer</string>
+    <string name="delete">Supprimer</string>
 </resources>
