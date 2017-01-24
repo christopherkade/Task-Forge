@@ -18,7 +18,6 @@
     <string name="action_tutorial">Tutoriel</string>
 
     <!-- Nav. Drawer -->
-    <string name="generalTab">Général</string>
     <string name="aboutTab">A propos</string>
     <string name="navigation_drawer_open">Ouvrir tiroir de navigation</string>
     <string name="navigation_drawer_close">Fermer tiroir de navigation</string>

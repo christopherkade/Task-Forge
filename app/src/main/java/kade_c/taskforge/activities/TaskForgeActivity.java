@@ -7,6 +7,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import kade_c.taskforge.R;
 import kade_c.taskforge.utils.DialogHandler;
@@ -51,12 +53,14 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
     private String fname = "";
     private String previousTabName;
-    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_taskforge);
+
+        // On app launch, sets the right language
+        setLanguage();
 
         // Setup file manager
         IFM = new InternalFilesManager(this, this);
@@ -71,7 +75,34 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
-     * Deactivated 'back' button press when drawer is closed.
+     * On app launch, set language to the one defined in the preferences.
+     */
+    private void setLanguage() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Locale locale;
+
+        String language = sharedPref.getString(SettingsFragment.KEY_PREF_LANGUAGE, "English");
+
+        switch (language) {
+            case "English":
+                locale = new Locale("en");
+                break;
+            case "French":
+                locale = new Locale("fr");
+                break;
+            default:
+                locale = new Locale("en");
+                break;
+        }
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getApplicationContext().getResources().updateConfiguration(config, null);
+
+    }
+
+    /**
+     * Handles back navigation
      */
     @Override
     public void onBackPressed() {
@@ -79,16 +110,18 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (fname.equals("SettingsFragment")) {
-            Intent i = new Intent(getApplicationContext(), TaskForgeActivity.class);
-            Bundle b = new Bundle();
-            b.putString("previousTab", previousTabName);
-            i.putExtras(b);
-            startActivity(i);
+            displaySelectedScreen(previousTabName);
+            getFragmentManager().popBackStackImmediate();
+            setDrawerState(true);
+            displayMenu(true);
+            super.onBackPressed();
         } else if (!fname.equals("ToDoFragment"))  {
             fname = "ToDoFragment";
             setDrawerState(true);
             displayMenu(true);
             super.onBackPressed();
+        } else if (fname.equals("ToDoFragment")) {
+            finish();
         }
     }
 
@@ -110,9 +143,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         int id = item.getItemId();
         DialogHandler prompt = new DialogHandler(this, null, "");
 
-        if (id == R.id.action_log_out) {
-            prompt.signOut();
-        } else if (id == R.id.action_add_list) {
+        if (id == R.id.action_add_list) {
             prompt.addList();
         } else if (id == R.id.action_delete_list) {
             prompt.listDeletion();
@@ -120,7 +151,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             fname = "SettingsFragment";
             getFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, new SettingsFragment())
-                    .addToBackStack("SettingsFragment")
+                    .addToBackStack(fname)
                     .commit();
         } else if (id == R.id.action_tutorial) {
             new Tutorial(getWindow().getDecorView().getRootView(), this, toolbar);
@@ -165,18 +196,13 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        String currentListDisplay;
-
         // If we must go back to a previously selected page, do so here.
         String lastPage = getIntent().getStringExtra("previousTab");
         if (lastPage != null) {
             displaySelectedScreen(lastPage);
             setSelectedList(lastPage);
         } else {
-            if (getCurrentLanguage().equals("English"))
-                currentListDisplay = "General";
-            else
-                currentListDisplay = "Général";
+            String currentListDisplay = "General";
             navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
             displaySelectedScreen(currentListDisplay);
         }
@@ -191,7 +217,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         bundle.putString("name", title);
 
-        fragment = new ToDoFragment();
+        Fragment fragment = new ToDoFragment();
 
         // Sets fragment argument
         fragment.setArguments(bundle);
@@ -286,17 +312,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
-     * Calls authentication Activity and signs out.
-     */
-    public void signOut() {
-        Intent i = new Intent(getApplicationContext(), AuthenticationActivity.class);
-        Bundle b = new Bundle();
-        b.putBoolean("SignOut", true);
-        i.putExtras(b);
-        startActivity(i);
-    }
-
-    /**
      * Schedules a notification at the given delay
      */
     public void scheduleNotification(Notification notification, long delay) {
@@ -313,7 +328,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     /**
      * Builds a notification with the given title and content
      */
-    // TODO: Handle back button bug after notification opening
     public Notification getNotification(String title, String content) {
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentTitle(title);
@@ -334,13 +348,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         builder.setAutoCancel(true);
 
         return builder.build();
-    }
-
-    private String getCurrentLanguage() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String language = sharedPref.getString(SettingsFragment.KEY_PREF_LANGUAGE, "English");
-        return language;
     }
 
     public void setPreviousTabName(String previousTabName) {
@@ -367,5 +374,14 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         if (!checked) {
             navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
         }
+    }
+
+    public void restartFragment() {
+        getFragmentManager().popBackStackImmediate();
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, new SettingsFragment())
+                .addToBackStack("SettingsFragment")
+                .commit();
     }
 }

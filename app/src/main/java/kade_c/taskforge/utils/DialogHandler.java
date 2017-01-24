@@ -120,37 +120,6 @@ public class DialogHandler {
     }
 
     /**
-     * Prompts user before sign out
-     */
-    public void signOut() {
-        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
-        dialogBuilder.setTitle(activity.getResources().getString(R.string.action_log_out) + "?");
-        dialogBuilder.setNegativeButton(activity.getResources().getString(R.string.button_no), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        dialogBuilder.setPositiveButton(activity.getResources().getString(R.string.button_yes), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ((TaskForgeActivity)activity).signOut();
-                activity.overridePendingTransition(0, 0);
-
-                dialog.dismiss();
-            }
-        });
-
-        final AlertDialog alertDialog = dialogBuilder.create();
-
-        setDialogCancel(alertDialog);
-        dialogBuilder.show();
-    }
-
-    /**
      * Displays list name prompt
      */
     public void addList() {
@@ -476,7 +445,7 @@ public class DialogHandler {
             boolean allowNotifictions = sharedPref.getBoolean(SettingsFragment.KEY_PREF_NOTIFICATIONS, true);
 
             if (allowNotifictions) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.FRANCE);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US);
                 Date fullDate = sdf.parse(date + " " + time);
 
                 long ms = fullDate.getTime() - System.currentTimeMillis();

@@ -1,12 +1,15 @@
 package kade_c.taskforge.fragments;
 
+import android.app.Fragment;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.view.View;
 
 import java.util.Locale;
@@ -30,10 +33,8 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
 
         ((TaskForgeActivity) getActivity()).setDrawerState(false);
-//        ((TaskForgeActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((TaskForgeActivity)getActivity()).displayMenu(false);
 
-//        ((TaskForgeActivity)getActivity()).setCurrentMenuDisplay("Settings");
         handleLanguage();
     }
 
@@ -59,6 +60,7 @@ public class SettingsFragment extends PreferenceFragment {
         listPreference.setSummary(currentValue);
 
         listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String selectedLanguage = newValue.toString();
@@ -77,9 +79,7 @@ public class SettingsFragment extends PreferenceFragment {
                 getActivity().getApplicationContext().getResources().updateConfiguration(config, null);
 
                 // Refresh view
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, new SettingsFragment())
-                        .commit();
+                ((TaskForgeActivity)getActivity()).restartFragment();
 
                 return true;
             }

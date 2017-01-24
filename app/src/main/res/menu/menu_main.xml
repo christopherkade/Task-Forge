@@ -27,10 +27,5 @@
         <item
             android:id="@+id/action_about"
             android:title="@string/aboutTab" />
-
-        <item
-            android:id="@+id/action_log_out"
-            android:icon="@mipmap/log_off_icon"
-            android:title="@string/action_log_out" />
     </group>
 </menu>
