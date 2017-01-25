@@ -61,6 +61,12 @@ public class SettingsFragment extends PreferenceFragment {
         String currentValue = listPreference.getValue();
         listPreference.setSummary(currentValue);
 
+        if (currentValue.equals("English")) {
+            listPreference.setValueIndex(0);
+        } else {
+            listPreference.setValueIndex(1);
+        }
+
         listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -70,7 +76,7 @@ public class SettingsFragment extends PreferenceFragment {
 
                 // Change language
                 Locale locale;
-                if (selectedLanguage.equals("French") || selectedLanguage.equals("Français")) {
+                if (selectedLanguage.equals("French")) {
                     locale = new Locale("fr");
                 } else {
                     locale = new Locale("en");
