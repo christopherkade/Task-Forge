@@ -24,20 +24,21 @@ import kade_c.taskforge.fragments.ToDoFragment;
 public class ToDoArrayAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final Fragment fContext;
-    private final ArrayList<String> values;
+    private ArrayList<String> values;
     private InternalFilesManager IFM;
 
     public ToDoArrayAdapter(Context context, ArrayList<String> values, InternalFilesManager IFM, Fragment fContext) {
         super(context, -1, values);
         this.context = context;
         this.fContext = fContext;
-        this.values = values;
         this.IFM = IFM;
     }
 
     @NonNull
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        this.values = IFM.readListFile();
+
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -45,35 +46,32 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
 
         String currentTodo = values.get(position);
         String[] todoArray = currentTodo.split(" \\| ");
+
         String title = todoArray[0];
-        final String content = todoArray[1];
+        String content = todoArray[1];
         String date = todoArray[2];
         String time = todoArray[3];
         String checked = todoArray[4];
 
         TextView titleTextView = (TextView) rowView.findViewById(R.id.title);
-        titleTextView.setText(title);
-
         TextView dateTextView = (TextView) rowView.findViewById(R.id.date);
-        dateTextView.setText(date);
-
         TextView timeTextView = (TextView) rowView.findViewById(R.id.time);
-        timeTextView.setText(time);
-
         TextView contentTextView = (TextView) rowView.findViewById(R.id.content);
+
+        titleTextView.setText(title);
+        dateTextView.setText(date);
+        timeTextView.setText(time);
         contentTextView.setText(content);
+
 
         handleCheckBox(rowView, checked, position);
 
         return rowView;
     }
 
-    private void handleCheckBox(View rowView, String checked, final int position) {
+    private void handleCheckBox(final View rowView, String checked, final int position) {
         final CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
 
-        /**
-         * When user clicks on CheckBox, change state in file
-         */
         checkBox.setOnClickListener(new View.OnClickListener() {
 
             /**

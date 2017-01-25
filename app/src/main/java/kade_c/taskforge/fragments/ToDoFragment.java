@@ -175,6 +175,7 @@ public class ToDoFragment extends Fragment {
         lines = IFM.readListFile();
 
         final ToDoArrayAdapter adapter = new ToDoArrayAdapter(getActivity(), lines, IFM, this);
+        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mListView.setAdapter(adapter);
     }
 }
