@@ -1,78 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout_root"
-    android:layout_width="fill_parent"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:padding="10dp" >
+    android:layout_width="fill_parent">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/layout_root"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="10dp" >
 
-    <TextView
-        android:id="@+id/title_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_title"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_title"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <EditText
-        android:id="@+id/title_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:inputType="text"
-        android:layout_below="@id/title_text">
-        <requestFocus />
-    </EditText>
+        <EditText
+            android:id="@+id/title_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:inputType="text"
+            android:layout_below="@id/title_text">
+            <requestFocus />
+        </EditText>
 
-    <TextView
-        android:id="@+id/content_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_below="@id/title_input"/>
+        <TextView
+            android:id="@+id/content_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@id/title_input"/>
 
-    <EditText
-        android:id="@+id/content_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/content_text"
-        android:singleLine="true"
-        android:inputType="text">
-    </EditText>
+        <EditText
+            android:id="@+id/content_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content_text"
+            android:singleLine="true"
+            android:inputType="text">
+        </EditText>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/calendar"
-        android:id="@+id/calendar_image"
-        android:layout_below="@id/content_input"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_centerInParent="true"
-        android:contentDescription="@string/content_desc_calendar" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/calendar"
+            android:id="@+id/calendar_image"
+            android:layout_below="@id/content_input"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/content_desc_calendar" />
 
-    <TextView
-        android:id="@+id/date_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_date"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_centerInParent="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_below="@id/calendar_image"/>
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_date"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@id/calendar_image"/>
 
-    <TimePicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:id="@+id/time"
-        android:timePickerMode="spinner"
-        android:layout_below="@id/date_text"
-        android:layout_centerHorizontal="true">
+        <TimePicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/time"
+            android:timePickerMode="spinner"
+            android:layout_below="@id/date_text"
+            android:layout_centerHorizontal="true">
 
-    </TimePicker>
+        </TimePicker>
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>
