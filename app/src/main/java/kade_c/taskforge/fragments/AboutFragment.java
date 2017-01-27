@@ -27,10 +27,7 @@ public class AboutFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_about, container, false);
 
         ((TaskForgeActivity) getActivity()).setDrawerState(false);
-//        ((TaskForgeActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((TaskForgeActivity)getActivity()).displayMenu(false);
-
-//        ((TaskForgeActivity)getActivity()).setCurrentMenuDisplay("About");
 
         setListeners();
 

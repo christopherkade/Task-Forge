@@ -69,6 +69,9 @@ public class ToDoArrayAdapter extends ArrayAdapter<String> {
         return rowView;
     }
 
+    /**
+     * If a checkbox is checked, act accordingly
+     */
     private void handleCheckBox(final View rowView, String checked, final int position) {
         final CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
 

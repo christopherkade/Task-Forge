@@ -1,6 +1,5 @@
 package kade_c.taskforge.fragments;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -93,8 +92,6 @@ public class SettingsFragment extends PreferenceFragment {
 
                 Toast.makeText(getActivity(), getResources().getString(R.string.settings_language_set),
                         Toast.LENGTH_LONG).show();
-
-                // ((TaskForgeActivity)getActivity()).restartFragment();
 
                 return true;
             }

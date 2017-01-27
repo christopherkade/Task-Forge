@@ -53,7 +53,6 @@ public class DialogHandler {
         this.activity = activity;
         this.fragment = fragment;
         input = new ArrayList<>();
-
         IFM = new InternalFilesManager(activity, activity, tabSelected);
     }
 

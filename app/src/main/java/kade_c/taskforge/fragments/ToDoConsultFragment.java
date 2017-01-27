@@ -25,10 +25,7 @@ public class ToDoConsultFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_consult_todo, container, false);
 
         ((TaskForgeActivity)getActivity()).setDrawerState(false);
-//        ((TaskForgeActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((TaskForgeActivity)getActivity()).displayMenu(false);
-//        ((TaskForgeActivity)getActivity()).setCurrentListDisplay(null);
-//        ((TaskForgeActivity)getActivity()).setCurrentMenuDisplay("Consult");
 
         setDetails();
 

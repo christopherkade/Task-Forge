@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
+ * Task Forge data is kept via internal files
  * Handles the file management (list creation etc.)
  */
 public class InternalFilesManager {
@@ -37,8 +38,6 @@ public class InternalFilesManager {
         fileToOpen = filename;
 
         fileToOpen = fileToOpen.replace("\n", "");
-        // Handles Général to General list
-        fileToOpen = fileToOpen.replace("é", "e");
     }
 
     /**
@@ -78,6 +77,10 @@ public class InternalFilesManager {
         return lines;
     }
 
+    /**
+     * Reads our file containing our existing tabs (lists)
+     * @return an ArrayList<String> of our tabs
+     */
     public ArrayList<String> readTabFile() {
         ArrayList<String> lines = new ArrayList<>();
         File file = context.getFileStreamPath("tabs");
@@ -132,6 +135,9 @@ public class InternalFilesManager {
         }
     }
 
+    /**
+     * Checks if the ArrayList passed as parameter has duplicate values
+     */
     private static boolean hasDuplicates(ArrayList<String> list, String name)
     {
         int numCount = 0;
@@ -173,7 +179,6 @@ public class InternalFilesManager {
 
     /**
      * Deletes file passed as parameter
-     * @param fileToDelete
      */
     public void deleteFile(String fileToDelete) {
         File dir = context.getFilesDir();
@@ -218,6 +223,9 @@ public class InternalFilesManager {
         }
     }
 
+    /**
+     * Deletes a tab in our tab file at a given position
+     */
     public void deleteTab(int lineToDelete) {
         try {
             // Reads file and saves file without deck to be deleted in temporary file.
@@ -345,6 +353,10 @@ public class InternalFilesManager {
         }
     }
 
+    /**
+     * Moves item at given position at the end of the list
+     * @param lineToMove
+     */
     public void moveItemToEnd(int lineToMove) {
         String line = "";
 

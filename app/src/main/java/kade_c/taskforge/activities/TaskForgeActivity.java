@@ -37,7 +37,7 @@ import kade_c.taskforge.fragments.ToDoFragment;
 import kade_c.taskforge.utils.InternalFilesManager;
 
 /**
- * Activity that handles the display of List Fragments
+ * Our apps main activity, handles all the fragments
  */
 public class TaskForgeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -51,6 +51,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     private Menu menu;
     private Toolbar toolbar;
 
+    // Current fragment name and previous tab visited name
     private String fname = "";
     private String previousTabName;
 
@@ -72,33 +73,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         setUpNavDrawer();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setDrawerState(true);
-    }
-
-    /**
-     * On app launch, set language to the one defined in the preferences.
-     */
-    private void setLanguage() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        Locale locale;
-
-        String language = sharedPref.getString(SettingsFragment.KEY_PREF_LANGUAGE, "English");
-
-        switch (language) {
-            case "English":
-                locale = new Locale("en");
-                break;
-            case "French":
-                locale = new Locale("fr");
-                break;
-            default:
-                locale = new Locale("en");
-                break;
-        }
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getApplicationContext().getResources().updateConfiguration(config, null);
-
     }
 
     /**
@@ -170,6 +144,34 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         return true;
     }
 
+
+    /**
+     * On app launch, set language to the one defined in the preferences.
+     */
+    private void setLanguage() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Locale locale;
+
+        String language = sharedPref.getString(SettingsFragment.KEY_PREF_LANGUAGE, "English");
+
+        switch (language) {
+            case "English":
+                locale = new Locale("en");
+                break;
+            case "French":
+                locale = new Locale("fr");
+                break;
+            default:
+                locale = new Locale("en");
+                break;
+        }
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getApplicationContext().getResources().updateConfiguration(config, null);
+
+    }
+
     /**
      * Shows or hides items in our Menu
      */
@@ -214,18 +216,14 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
      */
     private Fragment getFragment(String title) {
         Bundle bundle = new Bundle();
-
         bundle.putString("name", title);
-
         Fragment fragment = new ToDoFragment();
-
-        // Sets fragment argument
         fragment.setArguments(bundle);
         return fragment;
     }
 
     /**
-     * Checks the selected fragments state and launches it.
+     * Gets the fragment we require and commit it
      */
     private void displaySelectedScreen(String title) {
         Fragment fragment = getFragment(title);
@@ -374,14 +372,5 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         if (!checked) {
             navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
         }
-    }
-
-    public void restartFragment() {
-        getFragmentManager().popBackStackImmediate();
-
-        getFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, new SettingsFragment())
-                .addToBackStack("SettingsFragment")
-                .commit();
     }
 }

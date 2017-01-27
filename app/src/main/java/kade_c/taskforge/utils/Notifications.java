@@ -14,7 +14,7 @@ public class Notifications extends BroadcastReceiver {
     public static String NOTIFICATION = "notification";
 
     /**
-     * Called when a notification is received, displays it.
+     * Called when a notification must be sent to user
      */
     @Override
     public void onReceive(Context context, Intent intent) {
