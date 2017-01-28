@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
@@ -63,6 +64,8 @@ public class NotificationHandler extends BroadcastReceiver {
         builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setVibrate(new long[] { 0, 1000, 500, 1000, 0});
+        builder.setLights(Color.RED, 1000, 1000);
 
         Intent resultIntent = new Intent(activity, TaskForgeActivity.class);
         resultIntent.putExtra("previousTab", tab);
