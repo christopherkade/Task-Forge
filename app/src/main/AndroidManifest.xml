@@ -22,11 +22,14 @@
         </activity>
 
         <activity android:name=".activities.TaskForgeActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-            <action android:name="android.intent.action.MAIN" />
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         </activity>
 
-        <receiver android:name=".utils.Notifications" />
+        <receiver android:name=".utils.NotificationHandler" />
     </application>
 
 </manifest>

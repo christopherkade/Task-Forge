@@ -32,7 +32,7 @@
     <!-- Settings -->
     <string name="settings_delete_on_check">Supprimer les tâches cochées</string>
     <string name="settings_move_item_on_check">Déplacer les tâches finies à la fin</string>
-    <string name="settings_notifications">Autoriser les notifications</string>
+    <string name="settings_notifications">Autoriser les notificationHandler</string>
     <string name="settings_title">Paramètres</string>
     <string name="settings_language">Langue</string>
     <string name="settings_default_not_time">Me notifier avant un événement (heures)</string>
@@ -87,4 +87,6 @@
 
     <string name="edit">Editer</string>
     <string name="delete">Supprimer</string>
+    <string name="tab_no_longer_exists_text">Cette liste n\'existe plus</string>
+
 </resources>

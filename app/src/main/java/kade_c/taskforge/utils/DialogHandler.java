@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -23,16 +21,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import kade_c.taskforge.R;
 import kade_c.taskforge.activities.TaskForgeActivity;
-import kade_c.taskforge.fragments.SettingsFragment;
 import kade_c.taskforge.fragments.ToDoFragment;
 
 /**
@@ -48,10 +42,12 @@ public class DialogHandler {
     private InternalFilesManager IFM;
     private boolean inputError;
     private ArrayList<String> input;
+    private String currentTab;
 
     public DialogHandler(Activity activity, Fragment fragment, String tabSelected) {
         this.activity = activity;
         this.fragment = fragment;
+        this.currentTab = tabSelected;
         input = new ArrayList<>();
         IFM = new InternalFilesManager(activity, activity, tabSelected);
     }
@@ -356,7 +352,8 @@ public class DialogHandler {
                                     input.add(time);
 
                                     if (type.equals("create")) {
-                                        setNotification(title, content, date, time);
+                                        NotificationHandler notificationHandler = new NotificationHandler();
+                                        notificationHandler.setNotification(title, content, date, time, activity, currentTab);
                                         IFM.writeListFile(input.get(0), input.get(1), input.get(2), input.get(3));
                                     } else if (type.equals("edit")) {
                                         IFM.replaceItem(position, input.get(0), input.get(1), input.get(2), input.get(3));
@@ -432,27 +429,5 @@ public class DialogHandler {
         }
 
         return wrong;
-    }
-
-    /**
-     * Sets a notification to be displayed at the given time and date.
-     */
-    private void setNotification(String title, String content, String date, String time) {
-        try {
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
-
-            boolean allowNotifictions = sharedPref.getBoolean(SettingsFragment.KEY_PREF_NOTIFICATIONS, true);
-
-            if (allowNotifictions) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US);
-                Date fullDate = sdf.parse(date + " " + time);
-
-                long ms = fullDate.getTime() - System.currentTimeMillis();
-
-                ((TaskForgeActivity) activity).scheduleNotification(((TaskForgeActivity) activity).getNotification(title, content), ms);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 }

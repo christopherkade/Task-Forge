@@ -1,15 +1,8 @@
 package kade_c.taskforge.activities;
 
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -29,7 +22,6 @@ import java.util.Locale;
 
 import kade_c.taskforge.R;
 import kade_c.taskforge.utils.DialogHandler;
-import kade_c.taskforge.utils.Notifications;
 import kade_c.taskforge.utils.Tutorial;
 import kade_c.taskforge.fragments.AboutFragment;
 import kade_c.taskforge.fragments.SettingsFragment;
@@ -52,7 +44,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     private Toolbar toolbar;
 
     // Current fragment name and previous tab visited name
-    private String fname = "";
+    private String previousFragment = "";
     private String previousTabName;
 
     @Override
@@ -66,13 +58,12 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         // Setup file manager
         IFM = new InternalFilesManager(this, this);
 
-        // Add existing tabs to the navigation drawer
-        refreshTabs();
-
         // Setup our navigation drawer
         setUpNavDrawer();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setDrawerState(true);
+
+        // Handles tab to be selected and displayed
+        handleTabDisplay();
     }
 
     /**
@@ -81,20 +72,22 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        // If navigation drawer is open, close it
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (fname.equals("SettingsFragment")) {
+        } else if (previousFragment.equals("SettingsFragment")) {
             displaySelectedScreen(previousTabName);
             getFragmentManager().popBackStackImmediate();
             setDrawerState(true);
             displayMenu(true);
             super.onBackPressed();
-        } else if (!fname.equals("ToDoFragment"))  {
-            fname = "ToDoFragment";
+        } else if (!previousFragment.equals("ToDoFragment"))  {
+            previousFragment = "ToDoFragment";
             setDrawerState(true);
             displayMenu(true);
             super.onBackPressed();
-        } else if (fname.equals("ToDoFragment")) {
+        } else if (previousFragment.equals("ToDoFragment")) {
             finish();
         }
     }
@@ -122,10 +115,10 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         } else if (id == R.id.action_delete_list) {
             prompt.listDeletion();
         } else if (id == R.id.action_settings) {
-            fname = "SettingsFragment";
+            previousFragment = "SettingsFragment";
             getFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, new SettingsFragment())
-                    .addToBackStack(fname)
+                    .addToBackStack(previousFragment)
                     .commit();
         } else if (id == R.id.action_tutorial) {
             new Tutorial(getWindow().getDecorView().getRootView(), this, toolbar);
@@ -143,7 +136,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     /**
      * On app launch, set language to the one defined in the preferences.
@@ -185,6 +177,9 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
      * Sets up our Navigation Drawer
      */
     public void setUpNavDrawer() {
+        // Add existing tabs to the navigation drawer
+        refreshTabs();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -197,9 +192,21 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
-        // If we must go back to a previously selected page, do so here.
+    /**
+     * Handles tab redirection on app opening
+     */
+    private void handleTabDisplay() {
+        // If we must go back to a previously selected tab, do so here.
         String lastPage = getIntent().getStringExtra("previousTab");
+
+        // Check if tab still exists
+        if (!checkTabExistance(lastPage)) {
+            lastPage = null;
+        }
+
+        // If so display it
         if (lastPage != null) {
             displaySelectedScreen(lastPage);
             setSelectedList(lastPage);
@@ -208,6 +215,22 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             navigationView.getMenu().findItem(R.id.nav_general).setChecked(true);
             displaySelectedScreen(currentListDisplay);
         }
+    }
+
+    /**
+     * Checks if the tab to be redirected to still exists.
+     * If a user has a notification that leads to a tab deleted, we handle it here.
+     */
+    private boolean checkTabExistance(String tab) {
+        ArrayList<String> tabs = IFM.readTabFile();
+
+        for (String currentTab : tabs) {
+            currentTab = currentTab.replace("\n", "");
+            if (currentTab.equals(tab)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -235,11 +258,11 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
      * @param fragmentR fragment used for replacement
      */
     public void replaceFragment(final Fragment fragmentR, boolean drawerOpen) {
-        fname = fragmentR.getClass().getSimpleName();
+        previousFragment = fragmentR.getClass().getSimpleName();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragmentR, fragmentR.getClass().getSimpleName())
-                .addToBackStack(fname)
+                .addToBackStack(previousFragment)
                 .commit();
 
         // If our drawer is open, close it
@@ -307,45 +330,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
             MenuItem menuItem = menu.add(tab);
             menuItem.setIcon(R.mipmap.ic_launcher);
         }
-    }
-
-    /**
-     * Schedules a notification at the given delay
-     */
-    public void scheduleNotification(Notification notification, long delay) {
-        Intent notificationIntent = new Intent(this, Notifications.class);
-        notificationIntent.putExtra(Notifications.NOTIFICATION_ID, 1);
-        notificationIntent.putExtra(Notifications.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-    }
-
-    /**
-     * Builds a notification with the given title and content
-     */
-    public Notification getNotification(String title, String content) {
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle(title);
-        builder.setContentText(content);
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-
-        Intent resultIntent = new Intent(this, TaskForgeActivity.class);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(TaskForgeActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentIntent(resultPendingIntent);
-        builder.setAutoCancel(true);
-
-        return builder.build();
     }
 
     public void setPreviousTabName(String previousTabName) {

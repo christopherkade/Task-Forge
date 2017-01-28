@@ -33,7 +33,7 @@
     <string name="settings_title">Settings</string>
     <string name="settings_delete_on_check">Delete item on checked</string>
     <string name="settings_move_item_on_check">Move completed tasks to end</string>
-    <string name="settings_notifications">Allow notifications</string>
+    <string name="settings_notifications">Allow notificationHandler</string>
     <string name="settings_language">Language</string>
     <string name="settings_default_not_time">Notify me before an event (hours)</string>
     <string name="settings_language_set">Language: English</string>
@@ -92,4 +92,6 @@
 
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+
+    <string name="tab_no_longer_exists_text">The list you have selected no longer exists</string>
 </resources>
