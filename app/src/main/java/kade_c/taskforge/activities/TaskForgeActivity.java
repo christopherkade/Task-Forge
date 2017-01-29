@@ -138,7 +138,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
     }
 
     /**
-     * On app launch, set language to the one defined in the preferences.
+     * Sets the language to the one defined in the preferences.
      */
     private void setLanguage() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -180,6 +180,7 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
         // Add existing tabs to the navigation drawer
         refreshTabs();
 
+        // Sets up our toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -189,7 +190,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -320,7 +320,6 @@ public class TaskForgeActivity extends AppCompatActivity implements NavigationVi
      * Adds tabs on our menu
      */
     private void refreshTabs() {
-        // Check if already displayed
         ArrayList<String> tabs = IFM.readTabFile();
 
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);

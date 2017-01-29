@@ -13,9 +13,12 @@
     <string name="name_hint">e.g: Christophe</string>
     <string name="sign_in">Connexion</string>
 
-    <!-- Task Forge -->
+    <!-- Actions -->
     <string name="action_log_out">Déconnexion</string>
     <string name="action_tutorial">Tutoriel</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_add_list">Ajouter une liste</string>
+    <string name="action_delete_list">Supprimer une liste</string>
 
     <!-- Nav. Drawer -->
     <string name="aboutTab">A propos</string>
@@ -27,28 +30,27 @@
     <string name="developerName_text">Christopher Kadé</string>
     <string name="email_text">E-mail</string>
     <string name="email_value">c.kade96@gmail.com</string>
-    <string name="action_settings">Paramètres</string>
 
     <!-- Settings -->
     <string name="settings_delete_on_check">Supprimer les tâches cochées</string>
     <string name="settings_move_item_on_check">Déplacer les tâches finies à la fin</string>
-    <string name="settings_notifications">Autoriser les notificationHandler</string>
+    <string name="settings_notifications">Autoriser les notifications</string>
     <string name="settings_title">Paramètres</string>
     <string name="settings_language">Langue</string>
     <string name="settings_default_not_time">Me notifier avant un événement (heures)</string>
     <string name="settings_language_set">Langue: Français</string>
-
-    <string name="action_add_list">Ajouter une liste</string>
-
-    <string name="list_name_text">Nom de la liste:</string>
-    <string name="action_delete_list">Supprimer une liste</string>
-    <string name="available_lists_text">Listes disponibles:</string>
 
     <!-- Dialog -->
     <string name="dialog_title">Titre:</string>
     <string name="dialog_content">Contenu:</string>
     <string name="dialog_date">Date:</string>
     <string name="dialog_list_name">Nom de la liste:</string>
+    <string name="list_name_text">Nom de la liste:</string>
+    <string name="available_lists_text">Listes disponibles:</string>
+    <string name="dialog_the">Le</string>
+    <string name="dialog_at">A</string>
+    <string name="edit">Editer</string>
+    <string name="delete">Supprimer</string>
 
     <!-- Text -->
     <string name="deleted_text">supprimé</string>
@@ -82,11 +84,6 @@
     <string name="tutorial_list_navigation_title">Navigation</string>
     <string name="tutorial_list_navigation_description">Vous pouvez naviguer à travers vos listes en cliquant ici</string>
 
-    <string name="dialog_the">Le</string>
-    <string name="dialog_at">A</string>
-
-    <string name="edit">Editer</string>
-    <string name="delete">Supprimer</string>
     <string name="tab_no_longer_exists_text">Cette liste n\'existe plus</string>
 
 </resources>
