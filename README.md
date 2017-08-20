@@ -1,6 +1,8 @@
 # Task Forge
 A simple ToDoList Android application.
 
+Available on the <a href="https://play.google.com/store/apps/details?id=kade_c.taskforge&hl=en" target="_blank">Google Play Store</a>.
+
 ## Features
 - ToDo creation, edition and deletion
 - List creation, edition and deletion
